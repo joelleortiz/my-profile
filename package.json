@@ -1,0 +1,21 @@
+{
+  "name": "my-profile",
+  "version": "1.0.0",
+  "description": "Joelle Ortiz's profile",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "tbd"
+  },
+  "keywords": [
+    "profile"
+  ],
+  "author": "Joelle Ortiz <contact@joelleortiz.me>",
+  "license": "ISC",
+  "dependencies": {
+    "static-server": "^2.0.5"
+  }
+}
