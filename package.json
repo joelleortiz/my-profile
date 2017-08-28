@@ -4,7 +4,10 @@
   "description": "Joelle Ortiz's profile",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "prestart": "wintersmith build",
+    "build": "wintersmith build",
+    "postinstall": "wintersmith build"
   },
   "repository": {
     "type": "git",
@@ -16,6 +19,11 @@
   "author": "Joelle Ortiz <contact@joelleortiz.me>",
   "license": "ISC",
   "dependencies": {
-    "static-server": "^2.0.5"
+    "static-server": "^2.0.5",
+    "wintersmith": "^2.4.1",
+    "wintersmith-articles-helper": "^0.1.0",
+    "wintersmith-autoprefixer-less": "0.0.1",
+    "wintersmith-handlebars": "0.0.6",
+    "wintersmith-less": "^1.0.0"
   }
 }

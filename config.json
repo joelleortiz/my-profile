@@ -1,0 +1,12 @@
+{
+  "plugins": [
+    "./node_modules/wintersmith-handlebars/wintersmith-handlebars.coffee",
+    "./node_modules/wintersmith-less/plugin.coffee"
+  ],
+  "require": {
+  },
+  "markdown": {
+    "smartLists": true,
+    "smartypants": true
+  }
+}
