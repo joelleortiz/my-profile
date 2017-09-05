@@ -6,11 +6,16 @@
 
 .header-text {
     margin: 0 auto;
-    width: 50%;
+    width: 100%;
     height: calc(#{$header-text-height} + #{$subheader-text-height} + #{$gutter-width*2});    
+    padding: $gutter-width;
+
+    @include respond-to('md'){
+        width: 50%;
+        padding: 0;
+    }
 
     .name {
-        border-bottom: 1px solid white;
         font-size: xx-large;
         height: $header-text-height;
     }

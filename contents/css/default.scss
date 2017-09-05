@@ -3,6 +3,16 @@ $header-text-height: 50px !default;
 $subheader-text-height: 20px !default;
 $gutter-width: 10px !default;
 
+$breakpoints: (
+    'sm':  ( min-width:  767px ),
+    'md': ( min-width:  992px ),
+    'lg':  ( min-width: 1200px ),
+    'sm-only':  ( max-width:  767px )
+  ) !default;
+
+
+@import "mixins/responsive";
+
 @import "layout/general";
 @import "layout/typography";
 
