@@ -1,4 +1,22 @@
 {
-    "template": "index.jade"
+    "template": "index.jade",
+    "jobs": [
+        {
+            "title": "SEPT 2016 - PRESENT Senior Software Developer, Kelly Services / CA-CIB",
+            "description": "blablabla"
+        }, 
+        {
+            "title": "JULY 2012 - AUGUST 2016 Software Developer, Willis Towers Watson",
+            "description": "blablabla"
+        }, 
+        {
+            "title": "MAY 2010 - JUNE 2012 Graduate Program Associate, Macquarie Offshore Services",
+            "description": "blablabla"
+        }, 
+        {
+            "title": "APRIL 2009 - JUNE 2009 Intern, Seer Technologies",
+            "description": "blablabla"
+        }
+    ]
 }
   

@@ -1,12 +1,13 @@
 .header {
     height: 100vh;
+    padding-top: calc(50vh - #{$header-text-height/2});
+    position: relative;
 }
 
 .header-text {
     margin: 0 auto;
     width: 50%;
-    height: calc(#{$header-text-height} + #{$subheader-text-height} + #{$gutter-width*2});
-    margin-top: calc(50vh - #{$header-text-height/2});
+    height: calc(#{$header-text-height} + #{$subheader-text-height} + #{$gutter-width*2});    
 
     .name {
         border-bottom: 1px solid white;
@@ -20,14 +21,18 @@
 }
 
 .article {
-    width: 80%;
-    margin: 50px auto;
+    width: 100%;
+    margin: 0 auto;
 }
 
 .contact {
-    float: right;
+    position: absolute;
     border-top: 1px dashed grey;
     border-bottom: 1px dashed grey;
     padding: 10px;
     font-size: smaller;
+    width: 160px;
+    height: 70px;
+    bottom: $gutter-width*2;
+    right: $gutter-width*2;
 }

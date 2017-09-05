@@ -4,6 +4,7 @@
     "./node_modules/wintersmith-libsass/index-dev.js"
   ],
   "require": {
+    "util": "util"
   },
   "markdown": {
     "smartLists": true,
