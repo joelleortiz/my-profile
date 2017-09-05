@@ -34,10 +34,19 @@
     position: absolute;
     border-top: 1px dashed grey;
     border-bottom: 1px dashed grey;
-    padding: 10px;
+    padding: $gutter-width;
     font-size: smaller;
-    width: 170px;
-    height: 70px;
+    width: $contact-height + $gutter-width*2;
+    height: $contact-detail-height*3 + $gutter-width*2;
     bottom: $gutter-width*2;
     right: $gutter-width*2;
+
+    > ul {
+        margin-bottom: 0;
+        height: $contact-height;
+    }
+
+    .contact-detail {
+        height: $contact-detail-height;
+    }
 }
