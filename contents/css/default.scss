@@ -2,14 +2,14 @@ $body-bg: #fff !default;
 $header-text-height: 50px !default;
 $subheader-text-height: 20px !default;
 $gutter-width: 10px !default;
-$contact-detail-height: 17px;
-$contact-width: 150px;
+$contact-detail-height: 17px !default;
+$contact-width: 150px !default;
 
 $breakpoints: (
-    'sm':  ( min-width:  767px ),
+    'sm':  ( min-width:  640px ),
     'md': ( min-width:  992px ),
     'lg':  ( min-width: 1200px ),
-    'sm-only':  ( max-width:  767px )
+    'sm-only':  ( max-width:  640px )
   ) !default;
 
 

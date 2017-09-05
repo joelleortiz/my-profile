@@ -10,7 +10,7 @@
     height: calc(#{$header-text-height} + #{$subheader-text-height} + #{$gutter-width*2});    
     padding: $gutter-width;
 
-    @include respond-to('md'){
+    @include respond-to('sm'){
         width: 50%;
         padding: 0;
     }
@@ -31,24 +31,22 @@
 }
 
 .contact {
-    position: absolute;
-    border-top: 1px dashed grey;
-    border-bottom: 1px dashed grey;
     padding: $gutter-width;
     font-size: smaller;
-    width: $contact-width + $gutter-width*2;
+    border-top: 1px dashed grey;
+    border-bottom: 1px dashed grey;
+    position: absolute;
     height: $contact-detail-height*3 + $gutter-width*2;
     bottom: $gutter-width*2;
     right: $gutter-width*2;
+    left:$gutter-width*2;
+
+    @include respond-to('sm'){
+        width: $contact-width + $gutter-width*2;
+        left: auto;
+    }
 
     > ul {
         margin-bottom: 0;
-        height: $contact-detail-height*3;
-        width: $contact-width;
-    }
-
-    .contact-detail {
-        height: $contact-detail-height;
-        width: $contact-width;
     }
 }
