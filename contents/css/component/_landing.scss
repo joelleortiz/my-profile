@@ -1,6 +1,6 @@
 .header {
     height: 100vh;
-    padding-top: calc(50vh - #{$header-text-height/2});
+    padding-top: calc(50vh - (#{$header-text-height} + #{$subheader-text-height} + #{$gutter-width*2})/2);
     position: relative;
 }
 
@@ -36,17 +36,19 @@
     border-bottom: 1px dashed grey;
     padding: $gutter-width;
     font-size: smaller;
-    width: $contact-height + $gutter-width*2;
+    width: $contact-width + $gutter-width*2;
     height: $contact-detail-height*3 + $gutter-width*2;
     bottom: $gutter-width*2;
     right: $gutter-width*2;
 
     > ul {
         margin-bottom: 0;
-        height: $contact-height;
+        height: $contact-detail-height*3;
+        width: $contact-width;
     }
 
     .contact-detail {
         height: $contact-detail-height;
+        width: $contact-width;
     }
 }
