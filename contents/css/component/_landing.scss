@@ -1,0 +1,33 @@
+.header {
+    height: 100vh;
+}
+
+.header-text {
+    margin: 0 auto;
+    width: 50%;
+    height: calc(#{$header-text-height} + #{$subheader-text-height} + #{$gutter-width*2});
+    margin-top: calc(50vh - #{$header-text-height/2});
+
+    .name {
+        border-bottom: 1px solid white;
+        font-size: xx-large;
+        height: $header-text-height;
+    }
+
+    .subheader {
+        height: $subheader-text-height;
+    }
+}
+
+.article {
+    width: 80%;
+    margin: 50px auto;
+}
+
+.contact {
+    float: right;
+    border-top: 1px dashed grey;
+    border-bottom: 1px dashed grey;
+    padding: 10px;
+    font-size: smaller;
+}

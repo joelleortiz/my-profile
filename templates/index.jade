@@ -2,4 +2,43 @@ extends layout
 
 block content
   article.article
-    section.content!= page.html
+    section.header
+      div(class='navbar-fixed-top navbar')
+        div.container
+          div.navbar-header blabla
+          nav(class='collapse navbar-collapse navbar-right')
+            ul(class='nav navbar-nav')
+              li tae
+      div.header-text
+        p.name Hi, I'm Joelle.
+        p.subheader I'm a Software Developer
+
+    section.contact
+      ul.list-unstyled
+        li 
+          i(class='fa fa-mobile')
+          span +65 9337 0304
+        li 
+          i(class='fa fa-envelope')
+          span contact@joelleortiz.me
+        li 
+          i(class='fa fa-mouse-pointer')
+          span www.joelleortiz.me
+    section.content
+      div.experience
+        div.section-header
+          h5.text-uppercase Experience
+        div.section-content
+          ul.list-unstyled
+            li
+              div.title SEPT 2016 - PRESENT Senior Software Developer, Kelly Services / CA-CIB
+              div.description blablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablabla
+            li
+              div.title JULY 2012 - AUGUST 2016 Software Developer, Willis Towers Watson
+              div.description blablabla
+            li
+              div.title MAY 2010 - JUNE 2012 Graduate Program Associate,  ss Macquarie Offshore Service sdfsdfs
+              div.description blablabla
+            li
+              div.title APRIL 2009 - JUNE 2009 Intern, Seer Technologies
+              div.description blablabla

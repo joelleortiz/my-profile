@@ -1,7 +1,7 @@
 {
   "plugins": [
     "./node_modules/wintersmith-handlebars/wintersmith-handlebars.coffee",
-    "./node_modules/wintersmith-less/plugin.coffee"
+    "./node_modules/wintersmith-libsass/index-dev.js"
   ],
   "require": {
   },

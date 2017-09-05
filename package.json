@@ -4,6 +4,7 @@
   "description": "Joelle Ortiz's profile",
   "main": "index.js",
   "scripts": {
+    "watch": "watch \"npm run build\" ./contents ./templates",
     "start": "node index.js",
     "prestart": "wintersmith build",
     "build": "wintersmith build",
@@ -21,9 +22,7 @@
   "dependencies": {
     "static-server": "^2.0.5",
     "wintersmith": "^2.4.1",
-    "wintersmith-articles-helper": "^0.1.0",
-    "wintersmith-autoprefixer-less": "0.0.1",
     "wintersmith-handlebars": "0.0.6",
-    "wintersmith-less": "^1.0.0"
+    "wintersmith-libsass": "^0.4.1"
   }
 }
