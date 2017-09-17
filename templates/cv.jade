@@ -1,0 +1,28 @@
+extends layout
+
+block content
+    article.article
+        section.content
+            div.experience
+                div.section-header
+                h5.text-uppercase Experience
+                div.section-content
+                ul.list-unstyled
+                    each job in contents['cv.json'].metadata.jobs
+                        li
+                            div.title=job.title
+                            div.description=job.description
+                            ul
+                                each project in job.projects
+                                    li
+                                    div.description=project.description
+            div.skills
+                div.section-header
+                h5.text-uppercase Skills
+                div.section-content
+                ul.list-unstyled
+                    each skill in contents['cv.json'].metadata.skills
+                        li
+                            div.name=skill.name
+                            div.rating
+                                span(class='stars', data-rating=skill.rating, data-num-stars=5)

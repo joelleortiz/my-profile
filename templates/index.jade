@@ -3,12 +3,6 @@ extends layout
 block content
   article.article
     section.header
-      //div(class='navbar-fixed-top navbar')
-        div.container
-          div.navbar-header blabla
-          nav(class='collapse navbar-collapse navbar-right')
-            ul(class='nav navbar-nav')
-              li tae
       div.header-text
         p.name Hi, I'm Joelle.
         span.subheader
@@ -24,13 +18,6 @@ block content
           li.contact-detail 
             i(class='fa fa-mouse-pointer')
             a(href='http://www.joelleortiz.me') www.joelleortiz.me
-    //section.content
-      div.experience
-        div.section-header
-          h5.text-uppercase Experience
-        div.section-content
-          ul.list-unstyled
-            each job in contents['index.json'].metadata.jobs
-              li
-                div.title=job.title
-                div.description=job.description
+          li.contact-detail
+            i(class='fa fa-sticky-note')
+            a(href='/cv.html') About Me

@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "tbd"
+    "url": "https://github.com/joelleortiz/my-profile.git"
   },
   "keywords": [
     "profile"
@@ -24,5 +24,8 @@
     "wintersmith": "^2.4.1",
     "wintersmith-handlebars": "0.0.6",
     "wintersmith-libsass": "^0.4.1"
+  },
+  "devDependencies": {
+    "watch": "^1.0.2"
   }
 }
