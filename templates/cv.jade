@@ -4,26 +4,37 @@ block content
     article.article
         section(class='cv-content container')
             div.row
-                div(class='experience col-sm-8')
-                    div.section-header
-                    h5.text-uppercase Experience
-                    div.section-content
-                    ul.list-unstyled
-                        each job in contents['cv.json'].metadata.jobs
-                            li
-                                div.title=job.title
-                                div.description=job.description
-                                ul
-                                    each project in job.projects
-                                        li
-                                        div.description=project.description
+                div.col-sm-8
+                    div(class='row experience')
+                        div.section-header
+                            h4.text-uppercase Experience
+                        div.section-content
+                            ul.list-unstyled
+                                each job in contents['cv.json'].metadata.jobs
+                                    li.job
+                                        div.title=job.title
+                                        div.description=job.description
+                                        ul
+                                            each project in job.projects
+                                                li
+                                                    div.description=project.description
+                    div(class='row education')
+                        div.section-header
+                            h4.text-uppercase Education
+                        div.section-content
+                            ul.list-unstyled
+                                each educ in contents['cv.json'].metadata.education
+                                    li.education
+                                        div.title=educ.school
+                                        div.description=educ.course
+                                        div.description=educ.years
                 div(class='skills col-sm-4')
                     div.section-header
-                    h5.text-uppercase Skills
+                        h4.text-uppercase Skills
                     div.section-content
-                    ul.list-unstyled
-                        each skill in contents['cv.json'].metadata.skills
-                            li
-                                div.name=skill.name
-                                div.rating
-                                    span(class='stars', data-rating=skill.rating, data-num-stars=5)
+                        ul.list-unstyled
+                            each skill in contents['cv.json'].metadata.skills
+                                li
+                                    div.name=skill.name
+                                    div.rating
+                                        span(class='stars', data-rating=skill.rating, data-num-stars=5)

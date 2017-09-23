@@ -1,15 +1,19 @@
 {
     "template": "cv.jade",
+    "education": [
+        {
+            "school": "University of the Philippines - Diliman",
+            "years": "2005 - 2010",
+            "course": "BS Computer Science"
+        }
+    ],
     "jobs": [
         {
             "title": "SEPT 2016 - PRESENT Senior Software Developer, Kelly Services / CA-CIB",
             "description": "Developing compliance-related applications using AngularJS and C#. Performs technical design and code reviews along with enhancements and bug fixes.",
             "projects": [
                 {
-                    "description": "Worked on a simple workflow application using AngularJS with a C#.NET MVC backend."
-                },
-                {
-                    "description": "Worked on a rating simulator application using AngularJS with a C#.NET MVC backend."
+                    "description": "Implementing workflow applications using Angular with a C#.NET MVC backend."
                 }
             ]
         }, 
@@ -18,10 +22,10 @@
             "description": "Worked on various HR applications using C#.NET, involved with design and code reviews while also providing support across different teams. Became the Learning module owner and lead engineer.",
             "projects": [
                 {
-                    "description": "Applied enhancements and bug fixes to a legacy HR application used for performance reviews and learning management. C#.NET MVC with ASP.NET web forms and jQuery / javascript."
+                    "description": "Applied enhancements and bug fixes to a legacy HR application used for performance reviews and learning management. C#.NET MVC with ASP.NET web forms and jQuery / Javascript."
                 },
                 {
-                    "description": "Converted a legacy application used for analyzing compensation survey data using vanilla javascript and ADO.NET to Typescript / AngularJS with C#.NET and EF."
+                    "description": "Converted a legacy application used for analyzing compensation survey data using vanilla Javascript and ADO.NET to Typescript / AngularJS with C#.NET and EF."
                 },
                 {
                     "description": "Created a contract management application that allows HR personnel to convert Word documents into templates and then create contracts from these templates."
@@ -30,8 +34,11 @@
         }, 
         {
             "title": "MAY 2010 - JUNE 2012 Graduate Program Associate, Macquarie Offshore Services",
-            "description": "Started as a database administrator, providing support across different regions by handling SQL, Oracle, and Sybase requests, maintenance, and performance improvements. Then specialized in security operations in Windows by responding to requests and issues regarding Active Directory, Microsoft Exchange, and Vasco. Kickstarted development career by understanding the testing processes, creating both manual and automated test cases and then worked on enhancements, bug fixes, and automation solutions using Javascript and VB.NET.",
+            "description": "Started as a database administrator, then specialized in security operations in Windows. Kickstarted development career by understanding the testing processes, creating both manual and automated test cases and then worked on enhancements, bug fixes, and automation solutions using Javascript and VB.NET.",
             "projects": [
+                {
+                    "description": "Provided support across different regions by handling database requests (SQL, Oracle, and Sybase) and access requests (Active Directory, Microsoft Exchange, and Vasco), maintenance, and performance improvements."
+                },
                 {
                     "description": "Created an operations assignment tool using VB.Net and Oracle to help the service operations team to efficiently apply workforce management."
                 }
@@ -39,7 +46,7 @@
         }, 
         {
             "title": "APRIL 2009 - JUNE 2009 Intern, Seer Technologies",
-            "description": "Created small projects using Java, including an accounting web application.",
+            "description": "Created an accounting web application using Java.",
             "projects":[
                 
             ]

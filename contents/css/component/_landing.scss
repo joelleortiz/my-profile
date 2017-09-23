@@ -21,6 +21,7 @@
     }
 
     .subheader {
+        font-size: 1.25em;
         height: $subheader-text-height;
     }
 }
@@ -32,7 +33,7 @@
 
 .contact {
     padding: $gutter-width;
-    font-size: smaller;
+    font-size: 0.9em;
     border-top: 1px dashed grey;
     border-bottom: 1px dashed grey;
     position: absolute;
