@@ -1,9 +1,16 @@
-$body-bg: #fff !default;
+$body-bg: #EFEFEF !default;
+$text-color: #000 !default;
 $header-text-height: 50px !default;
 $subheader-text-height: 20px !default;
-$gutter-width: 10px !default;
+$gutter-width: 20px !default;
+$overlap-size: 60px !default;
 $contact-detail-height: 22px !default;
 $contact-width: 150px !default;
+$block-bg1: #EB6B56 !default;
+$block-bg2: #FBA026 !default;
+$block-bg3: #3D8EB9 !default;
+$block-bg4: #A38F84 !default;
+$text-color-alt: #fff !default;
 
 $breakpoints: (
     'sm':  ( min-width:  640px ),

@@ -4,31 +4,20 @@ block content
     article.article
         section(class='cv-content container')
             div.row
-                div.col-sm-8
-                    div(class='row experience')
-                        div.section-header
-                            h4.text-uppercase Experience
-                        div.section-content
-                            ul.list-unstyled
-                                each job in contents['cv.json'].metadata.jobs
-                                    li.job
-                                        div.title=job.title
-                                        div.description=job.description
-                                        ul
-                                            each project in job.projects
-                                                li
-                                                    div.description=project.description
-                    div(class='row education')
-                        div.section-header
-                            h4.text-uppercase Education
-                        div.section-content
-                            ul.list-unstyled
-                                each educ in contents['cv.json'].metadata.education
-                                    li.education
-                                        div.title=educ.school
-                                        div.description=educ.course
-                                        div.description=educ.years
-                div(class='skills col-sm-4')
+                div(class='experience col-md-8')
+                    div.section-header
+                        h4.text-uppercase Experience
+                    div.section-content
+                        ul.list-unstyled
+                            each job in contents['cv.json'].metadata.jobs
+                                li.job
+                                    div.title=job.title
+                                    div.description=job.description
+                                    ul
+                                        each project in job.projects
+                                            li
+                                                div.description=project.description
+                div(class='skills col-md-4')
                     div.section-header
                         h4.text-uppercase Skills
                     div.section-content
@@ -36,5 +25,30 @@ block content
                             each skill in contents['cv.json'].metadata.skills
                                 li
                                     div.name=skill.name
-                                    div.rating
-                                        span(class='stars', data-rating=skill.rating, data-num-stars=5)
+                div(class='education col-md-4')
+                        div.section-header
+                            h4.text-uppercase Education
+                        div.section-content
+                            ul.list-unstyled
+                                each educ in contents['cv.json'].metadata.education
+                                    li
+                                        div.title=educ.school
+                                        div.description=educ.course
+                                        div.description=educ.years
+                div(class='contact-box col-sm-4')
+                    ul.list-unstyled
+                        li.contact-detail 
+                            i(class='fa fa-mobile')
+                            a(href='tel:+6593370304') +65 9337 0304
+                        li.contact-detail
+                            i(class='fa fa-envelope')
+                            a(href='mailto:contact@joelleortiz.me') contact@joelleortiz.me
+                        li.contact-detail 
+                            i(class='fa fa-code')
+                            a(href='http://www.joelleortiz.me') www.joelleortiz.me
+                        li.contact-detail
+                            i(class='fa fa-linkedin')
+                            a(href='http://www.linkedin.com/in/joelle-ortiz') Linkedin
+                        li.contact-detail
+                            i(class='fa fa-undo')
+                            a(href='/') Go Back

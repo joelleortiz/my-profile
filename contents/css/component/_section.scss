@@ -2,12 +2,6 @@
     font-weight: bold;
 }
 
-.section-header {
-    animation-name: bounce;
-    animation-timing-function: cubic-bezier(0.17, 0.67, 0.98, 0.81);
-    animation-duration: 1s;
-}
-
 .section-content {
     padding-left: 10px;
 }
@@ -18,7 +12,57 @@
 }
 
 .experience {
+    animation: fromLeft 1s;
+    background-color: $block-bg1;
+    padding:$gutter-width;
+
+    @include respond-to('md'){
+        padding-right:$overlap-size;
+        margin: $gutter-width*-1;
+        margin-top: $gutter-width / 2;
+    }
+
     .job {
         padding-bottom: $gutter-width;
+    }
+}
+
+.skills {
+    animation: fromRight 1s;
+    padding:$gutter-width;
+    background-color: $block-bg3;
+    mix-blend-mode: lighten;
+
+    @include respond-to('md'){
+        margin-top: $overlap-size;
+        padding-left: $overlap-size;
+        margin-left:$overlap-size * -1 + $gutter-width * 1.5;
+    }
+}
+
+.education {
+    animation: fromLeft 2s;
+    padding: $gutter-width;
+    background-color: $block-bg2;
+    color: $text-color-alt;
+
+    @include respond-to('md'){
+        animation: fromRight 1.25s;
+        margin: $gutter-width*-1;
+        padding-left: $gutter-width * 2.5;
+        margin-left: $gutter-width * -1;
+        margin-right: $gutter-width;
+    }
+}
+
+.contact-box {
+    animation: fromRight 1.5s;
+    padding:$gutter-width;
+    background-color: $block-bg4;
+
+    @include respond-to('md'){
+        padding-left: $overlap-size;
+        margin-top: $gutter-width / 2;
+        margin-left:$gutter-width / 2 * -1;
     }
 }

@@ -1,4 +1,15 @@
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-size: 12px;
+    color: $text-color;
+}
+
+a {
+    color: $text-color;
+}
+
+a:hover{
+    color: $text-color-alt;
+    font-weight: bold;
+    text-decoration: none;
 }

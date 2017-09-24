@@ -2,3 +2,39 @@
     from { transform: translate(-10%,0) }
     to { transform: translate(0,0) }
 }
+
+@keyframes flip {
+    0% {
+      transform: perspective(400px) scale(0,0) translateZ(-500px) rotateX(45deg)
+    }
+    50% {
+        transform: perspective(400px) scale(1,1) translateZ(0) rotateX(45deg)
+    }
+    100% {
+        transform: perspective(400px) scale(1,1) translateZ(0) rotateX(0)
+    }
+  }
+
+@keyframes fromLeft {
+    from { transform: translate(-10%,0) }
+    to { transform: translate(0,0) }
+}
+
+@keyframes fromRight{
+    from { transform: translate(110%,0) }
+    to { transform: translate(0,0) }
+}
+
+@keyframes fromTop{
+    0% { 
+        transform: translate(0,-100%);
+        opacity: 0;
+    }
+    50% { 
+        opacity: 0.9;
+    }
+    100% { 
+        transform: translate(0,0);
+        opacity: 1;
+    }
+}

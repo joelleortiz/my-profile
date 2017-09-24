@@ -58,47 +58,15 @@
             "rating": 3
         },
         {
-            "name": "Database",
+            "name": "SQL",
             "rating": 3
         },
         {
-            "name": "AngularJS",
-            "rating": 3
-        },
-        {
-            "name": "Typescript",
-            "rating": 3
-        },
-        {
-            "name": "Entity Framework",
-            "rating": 2
-        },
-        {
-            "name": "LINQ to SQL",
-            "rating": 3
-        },
-        {
-            "name": "Agile methodology",
-            "rating": 4
-        },
-        {
-            "name": "Java",
-            "rating": 3
-        },
-        {
-            "name": "Oracle",
+            "name": "Angular",
             "rating": 3
         },
         {
             "name": "Javascript",
-            "rating": 3
-        },
-        {
-            "name": "VB.Net",
-            "rating": 3
-        },
-        {   
-            "name": "Web API",
             "rating": 3
         },
         {

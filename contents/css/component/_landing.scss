@@ -32,15 +32,15 @@
 }
 
 .contact {
+    animation: fromTop 1s;
     padding: $gutter-width;
-    font-size: 0.9em;
-    border-top: 1px dashed grey;
-    border-bottom: 1px dashed grey;
+    font-size: 1em;
     position: absolute;
-    height: $contact-detail-height*3 + $gutter-width*2;
+    height: $contact-detail-height*5 + $gutter-width*2;
     bottom: $gutter-width*2;
     right: $gutter-width*2;
     left:$gutter-width*2;
+    background-color: $block-bg4;
 
     @include respond-to('sm'){
         width: $contact-width + $gutter-width*2;
@@ -49,5 +49,8 @@
 
     > ul {
         margin-bottom: 0;
+        .contact-detail{
+            padding:2px;
+        }
     }
 }

@@ -20,6 +20,7 @@
   "author": "Joelle Ortiz <contact@joelleortiz.me>",
   "license": "ISC",
   "dependencies": {
+    "bootstrap-sass": "^3.3.7",
     "static-server": "^2.0.5",
     "wintersmith": "^2.4.1",
     "wintersmith-handlebars": "0.0.6",
