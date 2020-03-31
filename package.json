@@ -10,6 +10,9 @@
     "build": "wintersmith build",
     "postinstall": "wintersmith build"
   },
+  "engines": {
+    "node": "10.16.x"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/joelleortiz/my-profile"
@@ -20,9 +23,9 @@
   "author": "Joelle Ortiz <contact@joelleortiz.me>",
   "license": "ISC",
   "dependencies": {
-    "static-server": "^2.0.5",
-    "wintersmith": "^2.4.1",
-    "wintersmith-handlebars": "0.0.6",
+    "static-server": "^2.2.1",
+    "wintersmith": "^2.5.0",
+    "wintersmith-handlebars": "^0.1.1",
     "wintersmith-libsass": "^0.4.1"
   }
 }
