@@ -12,7 +12,7 @@ template: index.pug
 SEPT 2016 - PRESENT
 Senior Software Developer, Kelly Services / CA-CIB
 JULY 2012 - AUGUST 2016
-Software Developer, Willis Towers Watso
+Software Developer, Willis Towers Watson
 MAY 2010 - JUNE 2012
 Graduate Program Associate, Macquarie Offshore Services
 APRIL 2009 - JUNE 2009
