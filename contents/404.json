@@ -1,4 +1,3 @@
 {
-    "template": "404.jade"
+  "template": "404.pug"
 }
-  
