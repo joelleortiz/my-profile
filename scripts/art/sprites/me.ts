@@ -416,7 +416,7 @@ tag(
 				right: { ...PET_REACH, hand, elbow: [115 + (i % 2), 84 + (i === 2 ? 2 : 0)] },
 				head: { eyes: 'smile' }
 			},
-			300
+			400
 		)
 	)
 );

@@ -430,8 +430,7 @@ const margot = sheet<MargotPose>([
 			{ pose: { earFlick: true }, duration: 80 },
 			{ pose: {}, duration: 90 },
 			{ pose: { earFlick: true }, duration: 80 }
-		],
-		{ events: { 0: 'margot-wake' } }
+		]
 	],
 	[
 		'paw',
@@ -450,8 +449,7 @@ const margot = sheet<MargotPose>([
 			{ pose: { headLift: 3, eyes: 'half' }, duration: 700 },
 			{ pose: { headLift: 2 }, duration: 240 },
 			{ pose: { headLift: 1 }, duration: 240 }
-		],
-		{ events: { 0: 'margot-wake' } }
+		]
 	],
 	[
 		'stretch',
@@ -468,12 +466,22 @@ const margot = sheet<MargotPose>([
 	]
 ]);
 
+function reactionTo(
+	tags: TagDef[],
+	source: string,
+	name: string,
+	events: TagDef['events']
+): TagDef {
+	const tag = tags.find((t) => t.name === source)!;
+	return { name, from: tag.from, to: tag.to, events };
+}
+
 export const margotSprite: SpriteDef = {
 	name: 'margot',
 	width: MARGOT_W,
 	height: MARGOT_H,
 	anchor: [OX + 48, 44],
-	tags: margot.tags,
+	tags: [...margot.tags, reactionTo(margot.tags, 'ear', 'ear-react', { 0: 'margot-wake' })],
 	slices: { hit: { x: OX, y: 2, w: 92, h: 42 }, zzz: { x: OX + 6, y: 0, w: 1, h: 1 } },
 	frames: margot.frames.map((f) => ({
 		duration: f.duration,
