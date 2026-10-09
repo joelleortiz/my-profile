@@ -1,1 +1,95 @@
 @import 'tailwindcss';
+
+@theme {
+	--font-pixel: 'Pixelify Sans', ui-monospace, monospace;
+	--font-body: 'Atkinson Hyperlegible', ui-sans-serif, system-ui, sans-serif;
+	--font-mono: 'DM Mono', ui-monospace, monospace;
+}
+
+@theme inline {
+	--color-bg: var(--bg);
+	--color-surface: var(--surface);
+	--color-ink: var(--ink);
+	--color-soft: var(--soft);
+	--color-accent: var(--accent);
+	--color-line: var(--line);
+}
+
+:root {
+	/* One device pixel in CSS px, so the scene can scale by whole device pixels. */
+	--u: 1px;
+	--gutter: clamp(16px, 4vw, 48px);
+	--frame-border: 3px;
+	--frame-shadow: 6px;
+}
+
+@media (min-resolution: 1.25dppx) {
+	:root {
+		--u: 0.8px;
+	}
+}
+@media (min-resolution: 1.5dppx) {
+	:root {
+		--u: calc(2px / 3);
+	}
+}
+@media (min-resolution: 1.75dppx) {
+	:root {
+		--u: calc(4px / 7);
+	}
+}
+@media (min-resolution: 2dppx) {
+	:root {
+		--u: 0.5px;
+	}
+}
+@media (min-resolution: 2.25dppx) {
+	:root {
+		--u: calc(4px / 9);
+	}
+}
+@media (min-resolution: 2.5dppx) {
+	:root {
+		--u: 0.4px;
+	}
+}
+@media (min-resolution: 2.625dppx) {
+	:root {
+		--u: calc(8px / 21);
+	}
+}
+@media (min-resolution: 2.75dppx) {
+	:root {
+		--u: calc(4px / 11);
+	}
+}
+@media (min-resolution: 3dppx) {
+	:root {
+		--u: calc(1px / 3);
+	}
+}
+@media (min-resolution: 3.5dppx) {
+	:root {
+		--u: calc(2px / 7);
+	}
+}
+@media (min-resolution: 4dppx) {
+	:root {
+		--u: 0.25px;
+	}
+}
+
+html {
+	background: var(--bg);
+	color: var(--ink);
+}
+
+body {
+	font-family: var(--font-body);
+	overflow-x: clip;
+}
+
+:focus-visible {
+	outline: 3px solid var(--accent);
+	outline-offset: 3px;
+}

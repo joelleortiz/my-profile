@@ -1,0 +1,81 @@
+{
+	"frames": [
+		{
+			"filename": "sticker-name 0.aseprite",
+			"frame": {
+				"x": 0,
+				"y": 0,
+				"w": 20,
+				"h": 15
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 20,
+				"h": 15
+			},
+			"sourceSize": {
+				"w": 20,
+				"h": 15
+			},
+			"duration": 1000
+		}
+	],
+	"meta": {
+		"app": "https://www.aseprite.org/",
+		"version": "1.3",
+		"image": "sticker-name.png",
+		"format": "I8",
+		"size": {
+			"w": 20,
+			"h": 15
+		},
+		"scale": "1",
+		"frameTags": [],
+		"layers": [
+			{
+				"name": "Layer 1",
+				"opacity": 255,
+				"blendMode": "normal"
+			}
+		],
+		"slices": [
+			{
+				"name": "anchor",
+				"color": "#0000ffff",
+				"keys": [
+					{
+						"frame": 0,
+						"bounds": {
+							"x": 0,
+							"y": 0,
+							"w": 20,
+							"h": 15
+						},
+						"pivot": {
+							"x": 0,
+							"y": 0
+						}
+					}
+				]
+			},
+			{
+				"name": "hit",
+				"color": "#ff0000ff",
+				"keys": [
+					{
+						"frame": 0,
+						"bounds": {
+							"x": 0,
+							"y": 0,
+							"w": 19,
+							"h": 14
+						}
+					}
+				]
+			}
+		]
+	}
+}

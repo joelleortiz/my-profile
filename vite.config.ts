@@ -4,6 +4,10 @@ import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
+	build: {
+		// Sprite sheets stay separate files: inlining them as base64 would bloat the JS bundle.
+		assetsInlineLimit: (file) => (file.includes('/scene/art/') ? false : undefined)
+	},
 	plugins: [
 		tailwindcss(),
 		sveltekit({
