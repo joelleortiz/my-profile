@@ -1,0 +1,3 @@
+# Python virtualenv for the music scripts
+.venv/
+__pycache__/
