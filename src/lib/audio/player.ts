@@ -24,7 +24,7 @@ const LOWPASS_HZ: Record<SceneTime, number> = {
 	dusk: 10000,
 	night: 6000
 };
-const KEY_TAP_GAIN_DB = -22;
+const KEY_TAP_GAIN_DB = -10;
 const PITCH_SPREAD = 0.03;
 const GAIN_SPREAD_DB = 2;
 
