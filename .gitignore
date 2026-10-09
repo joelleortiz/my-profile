@@ -21,3 +21,12 @@ Thumbs.db
 # Vite
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Build briefs and personal reference material (CV, photos)
+/prompts/
+
+# Claude Code agent worktrees
+/.claude/worktrees/
+
+# Python
+.venv/
