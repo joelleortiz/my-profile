@@ -1,0 +1,234 @@
+{
+	"frames": [
+		{
+			"filename": "coffee 0.aseprite",
+			"frame": {
+				"x": 0,
+				"y": 0,
+				"w": 20,
+				"h": 46
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 20,
+				"h": 46
+			},
+			"sourceSize": {
+				"w": 20,
+				"h": 46
+			},
+			"duration": 1000
+		},
+		{
+			"filename": "coffee 1.aseprite",
+			"frame": {
+				"x": 20,
+				"y": 0,
+				"w": 20,
+				"h": 46
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 20,
+				"h": 46
+			},
+			"sourceSize": {
+				"w": 20,
+				"h": 46
+			},
+			"duration": 1000
+		},
+		{
+			"filename": "coffee 2.aseprite",
+			"frame": {
+				"x": 40,
+				"y": 0,
+				"w": 20,
+				"h": 46
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 20,
+				"h": 46
+			},
+			"sourceSize": {
+				"w": 20,
+				"h": 46
+			},
+			"duration": 1000
+		},
+		{
+			"filename": "coffee 3.aseprite",
+			"frame": {
+				"x": 60,
+				"y": 0,
+				"w": 20,
+				"h": 46
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 20,
+				"h": 46
+			},
+			"sourceSize": {
+				"w": 20,
+				"h": 46
+			},
+			"duration": 1000
+		},
+		{
+			"filename": "coffee 4.aseprite",
+			"frame": {
+				"x": 80,
+				"y": 0,
+				"w": 20,
+				"h": 46
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 20,
+				"h": 46
+			},
+			"sourceSize": {
+				"w": 20,
+				"h": 46
+			},
+			"duration": 1000
+		},
+		{
+			"filename": "coffee 5.aseprite",
+			"frame": {
+				"x": 100,
+				"y": 0,
+				"w": 20,
+				"h": 46
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 20,
+				"h": 46
+			},
+			"sourceSize": {
+				"w": 20,
+				"h": 46
+			},
+			"duration": 1000
+		}
+	],
+	"meta": {
+		"app": "https://www.aseprite.org/",
+		"version": "1.3",
+		"image": "coffee.png",
+		"format": "I8",
+		"size": {
+			"w": 120,
+			"h": 46
+		},
+		"scale": "1",
+		"frameTags": [
+			{
+				"name": "level5",
+				"from": 0,
+				"to": 0,
+				"direction": "forward",
+				"color": "#000000ff"
+			},
+			{
+				"name": "level4",
+				"from": 1,
+				"to": 1,
+				"direction": "forward",
+				"color": "#000000ff"
+			},
+			{
+				"name": "level3",
+				"from": 2,
+				"to": 2,
+				"direction": "forward",
+				"color": "#000000ff"
+			},
+			{
+				"name": "level2",
+				"from": 3,
+				"to": 3,
+				"direction": "forward",
+				"color": "#000000ff"
+			},
+			{
+				"name": "level1",
+				"from": 4,
+				"to": 4,
+				"direction": "forward",
+				"color": "#000000ff"
+			},
+			{
+				"name": "level0",
+				"from": 5,
+				"to": 5,
+				"direction": "forward",
+				"color": "#000000ff"
+			}
+		],
+		"layers": [
+			{
+				"name": "Layer 1",
+				"opacity": 255,
+				"blendMode": "normal"
+			}
+		],
+		"slices": [
+			{
+				"name": "anchor",
+				"color": "#0000ffff",
+				"keys": [
+					{
+						"frame": 0,
+						"bounds": {
+							"x": 0,
+							"y": 0,
+							"w": 20,
+							"h": 46
+						},
+						"pivot": {
+							"x": 10,
+							"y": 46
+						}
+					}
+				]
+			},
+			{
+				"name": "hit",
+				"color": "#ff0000ff",
+				"keys": [
+					{
+						"frame": 0,
+						"bounds": {
+							"x": 1,
+							"y": 0,
+							"w": 18,
+							"h": 46
+						}
+					}
+				]
+			}
+		]
+	}
+}

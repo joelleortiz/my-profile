@@ -1,0 +1,142 @@
+GIMP Palette
+Name: joelleortiz.me key palette
+Columns: 4
+#
+  0   0   0	transparent (index 0)
+ 18  17  33	wall d2
+ 37  35  64	wall d
+ 61  66 104	wall b
+ 82  97 134	wall l
+ 13  12  24	floor d2
+ 25  23  43	floor d
+ 44  47  77	floor b
+ 64  75 108	floor l
+ 21  19  33	desk d2
+ 44  42  67	desk d
+ 77  70 105	desk b
+ 94  93 133	desk l
+ 12  12  22	chair d2
+ 24  22  40	chair d
+ 47  42  71	chair b
+ 63  63 101	chair l
+ 23  21  40	rug d2
+ 51  47  85	rug d
+ 90  74 125	rug b
+104  95 155	rug l
+ 17  32  39	plant d2
+ 39  78  83	plant d
+ 63 125 118	plant b
+ 82 153 157	plant l
+ 37  35  62	pot d2
+ 70  63 105	pot d
+111  91 143	pot b
+130 120 165	pot l
+ 36  34  62	frame d2
+ 66  62 106	frame d
+ 90  96 144	frame b
+119 132 166	frame l
+ 27  25  48	poster d2
+ 55  52  93	poster d
+ 79  85 132	poster b
+102 118 160	poster l
+ 18  17  38	curtain d2
+ 40  37  78	curtain d
+ 74  61 120	curtain b
+ 84  81 151	curtain l
+166  50  60	skin d2
+200 103  88	skin d
+214 166 140	skin b
+226 203 179	skin l
+  5   5  12	hair d2
+ 10   9  21	hair d
+ 20  18  38	hair b
+ 35  38  72	hair l
+200  49 155	glasses d2
+215 106 159	glasses d
+227 160 178	glasses b
+238 200 217	glasses l
+ 45  35 146	sweater d2
+ 57  53 200	sweater d
+107 127 212	sweater b
+148 174 222	sweater l
+ 78  72 147	laptop d2
+112 111 179	laptop d
+157 166 200	laptop b
+191 201 217	laptop l
+ 67  64 100	tabby d2
+101  97 139	tabby d
+142 139 163	tabby b
+164 185 189	tabby l
+136 130 205	catWhite d2
+186 182 224	catWhite d
+232 229 243	catWhite b
+245 245 250	catWhite l
+184  40 143	nose d2
+213  82 147	nose d
+224 138 162	nose b
+234 179 204	nose l
+ 51 171 160	eye d2
+ 91 202 168	eye d
+143 216 178	eye b
+182 228 212	eye l
+ 28  16  22	coffee d2
+ 51  31  36	coffee d
+ 90  58  60	coffee b
+119  80  89	coffee l
+146  62  70	milk d2
+183 106  96	milk d
+201 163 144	milk b
+217 198 179	milk l
+169  29 155	straw d2
+216  54 164	straw d
+224 112 164	straw b
+232 155 204	straw l
+199  53  14	lamp d2
+237 128  47	lamp d
+240 194 110	lamp b
+244 228 157	lamp l
+248  53   0	lampGlow d2
+255 146  65	lampGlow d
+255 211 131	lampGlow b
+254 241 183	lampGlow l
+ 26  24  52	cushion d2
+ 53  49  99	cushion d
+ 91  74 140	cushion b
+104  97 168	cushion l
+  5  87 255	screen d2
+ 77 173 255	screen d
+143 228 255	screen b
+195 244 254	screen l
+ 42  35 118	book0 d2
+ 65  55 170	book0 d
+123  93 198	book0 b
+142 132 210	book0 l
+ 19  37  58	book1 d2
+ 39  86 109	book1 d
+ 60 144 155	book1 b
+ 82 167 184	book1 l
+118  35 108	book2 d2
+170  55 131	book2 d
+198  93 140	book2 b
+210 132 180	book2 l
+229   0 191	sticker0 d2
+255  46 174	sticker0 d
+255 112 169	sticker0 b
+254 164 215	sticker0 l
+ 23 113 154	sticker1 d2
+ 35 195 212	sticker1 d
+ 90 224 208	sticker1 b
+134 226 231	sticker1 l
+227  60   0	sticker2 d2
+255 145  44	sticker2 d
+255 211 110	sticker2 b
+254 241 162	sticker2 l
+ 23   2 255	sticker3 d2
+ 89  74 255	sticker3 d
+156 140 255	sticker3 b
+192 193 254	sticker3 l
+ 12  10  26	building d2
+ 22  20  46	building d
+ 38  42  82	building b
+ 56  71 115	building l
+255 255 255	white (fixed)

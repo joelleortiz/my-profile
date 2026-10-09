@@ -19,6 +19,8 @@
 	}
 
 	$effect(() => {
+		if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
 		let order = shuffle(words);
 		let index = 0;
 		let typed = '';
@@ -50,12 +52,44 @@
 	});
 </script>
 
-<span class="sr-only">{words.join(', ')}</span>
-<span aria-hidden="true">{text}<span class="cursor">|</span></span>
+<!-- Chosen in CSS (html.js is set before paint) so nothing shifts on hydration. -->
+<span class="static">{words.join(' · ')}</span>
+<span class="typed">
+	<span class="sr-only">{words.join(', ')}</span>
+	<span aria-hidden="true">{text}<span class="caret"></span></span>
+</span>
 
 <style>
-	.cursor {
-		animation: blink 1s step-end infinite;
+	.typed {
+		display: none;
+	}
+
+	:global(html.js) .static {
+		display: none;
+	}
+
+	:global(html.js) .typed {
+		display: inline;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		:global(html.js) .static {
+			display: inline;
+		}
+
+		:global(html.js) .typed {
+			display: none;
+		}
+	}
+
+	.caret {
+		display: inline-block;
+		width: 0.55em;
+		height: 0.95em;
+		margin-left: 0.12em;
+		vertical-align: -0.1em;
+		background: currentColor;
+		animation: blink 1.06s steps(1, end) infinite;
 	}
 
 	@keyframes blink {

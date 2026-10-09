@@ -30,3 +30,6 @@ vite.config.ts.timestamp-*
 
 # Python
 .venv/
+
+# Screenshots for review (not part of the site)
+screenshots/
