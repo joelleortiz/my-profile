@@ -61,6 +61,7 @@ export interface Tag {
 	to: number;
 	direction: 'forward' | 'reverse' | 'pingpong' | 'pingpong_reverse';
 	repeat: number;
+	events: Map<number, string[]>;
 }
 
 export interface Sheet {
@@ -99,7 +100,8 @@ export function parseSheet(name: string, json: AseSheetJson): Sheet {
 			from: t.from,
 			to: t.to,
 			direction,
-			repeat: Number(t.repeat ?? 0) || 0
+			repeat: Number(t.repeat ?? 0) || 0,
+			events: parseEvents(t.data)
 		});
 	}
 	const slices = new Map<string, AseSliceKey[]>();
@@ -119,6 +121,17 @@ export function parseSheet(name: string, json: AseSheetJson): Sheet {
 		tags,
 		slices
 	};
+}
+
+function parseEvents(data: string | undefined): Map<number, string[]> {
+	const events = new Map<number, string[]>();
+	for (const pair of data?.split(/\s+/) ?? []) {
+		const match = /^(\d+):([\w-]+)$/.exec(pair);
+		if (!match) continue;
+		const frame = Number(match[1]);
+		events.set(frame, [...(events.get(frame) ?? []), match[2]]);
+	}
+	return events;
 }
 
 function sliceKey(sheet: Sheet, name: string, frame: number): AseSliceKey | null {
@@ -159,11 +172,13 @@ export function tagSequence(tag: Tag): number[] {
 export class Player {
 	readonly sheet: Sheet;
 	tag: Tag;
+	done = false;
+	onFrame: ((offsetInTag: number) => void) | null = null;
 	private seq: number[];
 	private pos = 0;
 	private elapsed = 0;
 	private plays = 0;
-	done = false;
+	private once = false;
 
 	constructor(sheet: Sheet, tagName?: string) {
 		this.sheet = sheet;
@@ -180,7 +195,8 @@ export class Player {
 				from: 0,
 				to: this.sheet.frames.length - 1,
 				direction: 'forward',
-				repeat: 0
+				repeat: 0,
+				events: new Map()
 			}
 		);
 	}
@@ -189,32 +205,46 @@ export class Player {
 		return this.seq[this.pos];
 	}
 
-	play(tagName: string): void {
+	play(tagName: string, { once = false } = {}): void {
 		this.tag = this.resolve(tagName);
 		this.seq = tagSequence(this.tag);
 		this.pos = 0;
 		this.elapsed = 0;
 		this.plays = 0;
+		this.once = once;
 		this.done = false;
+		this.onFrame?.(this.frame - this.tag.from);
+	}
+
+	seek(offsetInTag: number): void {
+		const pos = this.seq.indexOf(this.tag.from + offsetInTag);
+		this.pos = pos < 0 ? 0 : pos;
+		this.elapsed = 0;
 	}
 
 	update(dt: number): boolean {
-		if (this.done || this.seq.length < 2) return false;
+		if (this.done) return false;
 		const before = this.frame;
 		this.elapsed += dt;
 		for (;;) {
-			const duration = this.sheet.frames[this.frame].duration;
+			const duration = Math.max(1, this.sheet.frames[this.frame].duration);
 			if (this.elapsed < duration) break;
 			this.elapsed -= duration;
 			if (this.pos + 1 < this.seq.length) {
 				this.pos++;
-			} else if (this.tag.repeat && ++this.plays >= this.tag.repeat) {
+			} else if (this.finishesThisPlay()) {
 				this.done = true;
 				break;
 			} else {
 				this.pos = 0;
 			}
+			this.onFrame?.(this.frame - this.tag.from);
 		}
 		return this.frame !== before;
+	}
+
+	private finishesThisPlay(): boolean {
+		const limit = this.once ? 1 : this.tag.repeat;
+		return limit > 0 && ++this.plays >= limit;
 	}
 }

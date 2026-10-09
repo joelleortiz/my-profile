@@ -530,8 +530,7 @@
 				"from": 4,
 				"to": 6,
 				"direction": "forward",
-				"color": "#000000ff",
-				"data": "0:margot-wake"
+				"color": "#000000ff"
 			},
 			{
 				"name": "paw",
@@ -545,8 +544,7 @@
 				"from": 10,
 				"to": 15,
 				"direction": "forward",
-				"color": "#000000ff",
-				"data": "0:margot-wake"
+				"color": "#000000ff"
 			},
 			{
 				"name": "stretch",
@@ -555,6 +553,14 @@
 				"direction": "forward",
 				"color": "#000000ff",
 				"data": "0:margot-stretch"
+			},
+			{
+				"name": "ear-react",
+				"from": 4,
+				"to": 6,
+				"direction": "forward",
+				"color": "#000000ff",
+				"data": "0:margot-wake"
 			}
 		],
 		"layers": [

@@ -52,7 +52,15 @@ interface SpriteInstance {
 	darkFrame: number | null;
 }
 
-type Pt = [number, number];
+export type Pt = [number, number];
+
+export interface HitArea {
+	layer: LayerId;
+	x: number;
+	y: number;
+	w: number;
+	h: number;
+}
 
 export interface SceneOptions {
 	frame: HTMLElement;
@@ -60,6 +68,8 @@ export interface SceneOptions {
 	time: SceneTime;
 	reducedMotion: boolean;
 	flags?: string[];
+	onEvent?: (sprite: string, event: string) => void;
+	onOffsets?: (offsets: Record<LayerId, Pt>) => void;
 }
 
 function canvas2d(w: number, h: number, willRead = false) {
@@ -118,6 +128,11 @@ export class SceneEngine {
 	private readonly instances = new Map<DrawItem, SpriteInstance>();
 	private readonly flags: Set<string>;
 	private readonly layerFactor = new Map<LayerId, number>();
+	private readonly nudges = new Map<string, Pt>();
+	private readonly finishes = new Map<SpriteInstance, () => void>();
+	private waits: { at: number; resolve: () => void }[] = [];
+	private clock = 0;
+	private readonly options: SceneOptions;
 
 	private palette: PaletteKey;
 	private reducedMotion: boolean;
@@ -154,6 +169,7 @@ export class SceneEngine {
 		sheets: Map<string, LoadedSheet>
 	) {
 		this.canvas = canvas;
+		this.options = options;
 		this.ctx = canvas.getContext('2d', { willReadFrequently: true })!;
 		this.ctx.imageSmoothingEnabled = false;
 		this.frameEl = options.frame;
@@ -175,6 +191,7 @@ export class SceneEngine {
 				player: new Player(loaded.sheet, item.tag),
 				darkFrame: darkTag ? darkTag.from : null
 			};
+			instance.player.onFrame = (offset) => this.frameStarted(instance, offset);
 			this.sprites.push(instance);
 			this.instances.set(item, instance);
 			if (!this.byName.has(item.sprite)) this.byName.set(item.sprite, instance);
@@ -220,11 +237,62 @@ export class SceneEngine {
 		this.render();
 	}
 
-	play(sprite: string, tag: string): void {
+	/** Plays a tag once and resolves when it ends; with `loop` it repeats and resolves at once. */
+	play(sprite: string, tag: string, { loop = false } = {}): Promise<void> {
+		const s = this.byName.get(sprite);
+		if (!s) return Promise.resolve();
+		this.finishes.get(s)?.();
+		this.finishes.delete(s);
+		s.player.play(tag, { once: !loop });
+		this.dirty = true;
+		if (loop || this.reducedMotion) return Promise.resolve();
+		return new Promise((resolve) => this.finishes.set(s, resolve));
+	}
+
+	/** Shows one frame of a tag and holds it, without firing its events. */
+	pose(sprite: string, tag: string, offsetInTag = 0): void {
 		const s = this.byName.get(sprite);
 		if (!s) return;
-		s.player.play(tag);
+		const onFrame = s.player.onFrame;
+		s.player.onFrame = null;
+		s.player.play(tag, { once: true });
+		s.player.seek(offsetInTag);
+		s.player.done = true;
+		s.player.onFrame = onFrame;
 		this.dirty = true;
+	}
+
+	/** Resolves after `ms` of running time: the clock stops while the scene is hidden or off-screen. */
+	wait(ms: number): Promise<void> {
+		return new Promise((resolve) => this.waits.push({ at: this.clock + ms, resolve }));
+	}
+
+	nudge(sprite: string, offset: Pt): void {
+		this.nudges.set(sprite, offset);
+		this.dirty = true;
+	}
+
+	hitArea(sprite: string): HitArea | null {
+		const s = this.byName.get(sprite);
+		const hit = s && sliceAt(s.loaded.sheet, 'hit', 0);
+		if (!s?.item.at || !hit) return null;
+		const [ax, ay] = anchorAt(s.loaded.sheet, 0);
+		return {
+			layer: s.item.layer,
+			x: s.item.at[0] - ax + hit.x,
+			y: s.item.at[1] - ay + hit.y,
+			w: hit.w,
+			h: hit.h
+		};
+	}
+
+	pointerX(): number | null {
+		return this.pointerInside ? ((this.target.x + 1) / 2) * NATIVE_W : null;
+	}
+
+	private frameStarted(s: SpriteInstance, offsetInTag: number): void {
+		const events = s.player.tag.events.get(offsetInTag);
+		for (const event of events ?? []) this.options.onEvent?.(s.item.sprite, event);
 	}
 
 	setFlag(flag: string, on: boolean): void {
@@ -239,14 +307,17 @@ export class SceneEngine {
 		if (reduced) {
 			this.eased = { x: 0, y: 0 };
 			this.target = { x: 0, y: 0 };
-			for (const s of this.sprites) s.player.play(s.item.tag ?? '');
 			this.updateOffsets();
+			for (const resolve of this.finishes.values()) resolve();
+			this.finishes.clear();
 		}
 		this.dirty = true;
 	}
 
 	destroy(): void {
 		this.destroyed = true;
+		this.waits = [];
+		this.finishes.clear();
 		cancelAnimationFrame(this.raf);
 		for (const cleanup of this.cleanups) cleanup();
 	}
@@ -298,6 +369,7 @@ export class SceneEngine {
 		this.raf = requestAnimationFrame(this.tick);
 		const dt = Math.min(now - this.last, MAX_STEP_MS);
 		this.last = now;
+		this.clock += dt;
 
 		if (!this.reducedMotion) {
 			if (this.touchOnly && !this.pointerInside) {
@@ -313,7 +385,24 @@ export class SceneEngine {
 
 		if (this.fadeMs && this.updateLighting(now)) this.dirty = true;
 		if (this.dirty) this.render();
+		this.settleFinishedPlays();
+		this.settleWaits();
 	};
+
+	private settleFinishedPlays(): void {
+		for (const [s, resolve] of this.finishes) {
+			if (!s.player.done) continue;
+			this.finishes.delete(s);
+			resolve();
+		}
+	}
+
+	private settleWaits(): void {
+		const due = this.waits.filter((w) => w.at <= this.clock);
+		if (!due.length) return;
+		this.waits = this.waits.filter((w) => w.at > this.clock);
+		for (const w of due) w.resolve();
+	}
 
 	private updateOffsets(): boolean {
 		let changed = false;
@@ -326,6 +415,7 @@ export class SceneEngine {
 				changed = true;
 			}
 		}
+		if (changed) this.options.onOffsets?.(Object.fromEntries(this.offsets) as Record<LayerId, Pt>);
 		return changed;
 	}
 
@@ -431,7 +521,8 @@ export class SceneEngine {
 		if (attached) return attached;
 		if (!s.item.at) return null;
 		const [ox, oy] = this.offset(s.item.layer);
-		return [s.item.at[0] + ox, s.item.at[1] + oy];
+		const [nx, ny] = this.nudges.get(s.item.sprite) ?? [0, 0];
+		return [s.item.at[0] + ox + nx, s.item.at[1] + oy + ny];
 	}
 
 	private slicePoint(parentName: string, sliceName: string): Pt | null {

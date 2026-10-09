@@ -2,6 +2,7 @@
 	import Contacts from '#lib/components/Contacts.svelte';
 	import Intro from '#lib/components/Intro.svelte';
 	import Scene from '#lib/components/Scene.svelte';
+	import SoundToggle from '#lib/components/SoundToggle.svelte';
 </script>
 
 <svelte:head>
@@ -17,6 +18,7 @@
 		<Intro />
 		<Scene />
 		<Contacts />
+		<SoundToggle />
 	</article>
 </main>
 
@@ -29,7 +31,7 @@
 		display: grid;
 		place-items: center;
 		min-height: 100svh;
-		padding: clamp(16px, 4vh, 40px) var(--gutter);
+		padding: clamp(16px, 3vh, 40px) var(--gutter);
 	}
 
 	.card {
@@ -37,7 +39,7 @@
 		container-type: inline-size;
 		display: flex;
 		flex-direction: column;
-		gap: 1.5rem;
+		gap: 1.25rem;
 		width: min(100%, var(--column));
 	}
 
@@ -48,7 +50,7 @@
 
 	@media (min-width: 640px) {
 		.card {
-			--card-pad: clamp(24px, 3vw, 40px);
+			--card-pad: clamp(24px, 3vw, 32px);
 			--scene-w: round(down, min(100cqi - var(--extra), 480px), var(--step));
 			width: min(100%, calc(var(--column) + 2 * var(--card-pad) + 4px));
 			padding: var(--card-pad);

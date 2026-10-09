@@ -123,7 +123,13 @@
 		{ "sprite": "cushion", "layer": "front", "at": [378, 258], "tag": "back" },
 		{ "sprite": "margot", "layer": "front", "at": [378, 246], "tag": "sleep" },
 		{ "sprite": "cushion", "layer": "front", "at": [378, 258], "tag": "front" },
-		{ "sprite": "zzz", "layer": "front", "attach": ["margot", "zzz"], "tag": "float" },
+		{
+			"sprite": "zzz",
+			"layer": "front",
+			"attach": ["margot", "zzz"],
+			"tag": "float",
+			"requires": "asleep"
+		},
 
 		{ "sprite": "leaves", "layer": "foreground", "at": [-10, 206] }
 	]
