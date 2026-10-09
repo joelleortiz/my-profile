@@ -2,6 +2,8 @@
 	"extends": "$app/tsconfig",
 	"compilerOptions": {
 		"strict": true,
+		// worker-configuration.d.ts imports the built worker for typed ctx.exports; generated JS isn't ours to type-check.
+		"checkJs": false,
 		"types": ["$app/types", "node", "./worker-configuration.d.ts"]
 	},
 	"include": ["src", "scripts", "vite.config.ts"]
