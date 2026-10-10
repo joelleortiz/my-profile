@@ -47,6 +47,9 @@ export const MATERIALS = [
 export type Material = (typeof MATERIALS)[number];
 export type Ramps = Record<Material, Ramp>;
 
+/** The paint-swatch card's chips, top to bottom; the CV's header swatches repeat them. */
+export const SWATCH_CHIPS: readonly Material[] = ['sweater', 'sticker1', 'sticker0', 'lamp'];
+
 export function materialBase(key: PaletteKey, material: Material): string {
 	const p = PALETTES[key];
 	if (material === 'building') return p.building;

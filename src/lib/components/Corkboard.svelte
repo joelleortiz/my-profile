@@ -1,11 +1,23 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { placeVars, SCENE } from '#lib/scene/layout.ts';
 	import PixelIcon, { type IconName } from './PixelIcon.svelte';
+
+	interface Props {
+		/** Whether the CV has content, and so its note (the `note-cv` sprite) is on the board. */
+		cv: boolean;
+	}
+
+	let { cv }: Props = $props();
 
 	// The cork, the paper notes and their pins are pixel art; these are the links written on them.
 	const style = placeVars('cork');
 
-	const LINKS: { icon: IconName; href: string; label: string; rot: number }[] = [
+	type Link = { icon: IconName; href: string; label: string; rot: number };
+
+	const CV_LINK: Link = { icon: 'page', href: resolve('/cv'), label: 'CV', rot: 1.2 };
+
+	const LINKS: Link[] = [
 		{
 			icon: 'mail',
 			href: 'mailto:contact@joelleortiz.me',
@@ -22,20 +34,28 @@
 		}
 	];
 
-	const notes = LINKS.map((link, i) => {
-		const n = SCENE.insets.notes[i];
-		return {
-			...link,
-			style: `--nx:${n.x};--ny:${n.y};--nw:${n.w};--nh:${n.h};rotate:${link.rot}deg`
-		};
-	});
+	const notes = $derived(
+		[...LINKS, ...(cv ? [CV_LINK] : [])].map((link, i) => {
+			const n = SCENE.insets.notes[i];
+			return {
+				...link,
+				style: `--nx:${n.x};--ny:${n.y};--nw:${n.w};--nh:${n.h};rotate:${link.rot}deg`
+			};
+		})
+	);
 </script>
 
-<nav class="corkboard in-room" aria-label="Contact" {style}>
+<!-- /cv runs no JavaScript, so its link loads the page afresh rather than routing in this one. -->
+<nav
+	class="corkboard in-room"
+	aria-label={cv ? 'Contact and CV' : 'Contact'}
+	data-sveltekit-reload
+	{style}
+>
 	<ul>
 		{#each notes as note (note.href)}
 			<li class="note" style={note.style}>
-				<!-- Profile links and mail, not app routes, so resolve() does not apply. -->
+				<!-- Profile links and mail aren't app routes; the CV's href comes from resolve(). -->
 				<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
 				<a href={note.href}>
 					<PixelIcon name={note.icon} />

@@ -1,0 +1,5 @@
+# Headers for the static assets, merged into the Worker's by adapter-cloudflare.
+
+# The CV's PDF stays reachable from the site but out of search results (/cv has a robots meta tag).
+/cv/*
+  X-Robots-Tag: noindex
