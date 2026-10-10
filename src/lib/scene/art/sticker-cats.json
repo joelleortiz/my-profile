@@ -5,20 +5,20 @@
 			"frame": {
 				"x": 0,
 				"y": 0,
-				"w": 19,
-				"h": 10
+				"w": 23,
+				"h": 15
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 19,
-				"h": 10
+				"w": 23,
+				"h": 15
 			},
 			"sourceSize": {
-				"w": 19,
-				"h": 10
+				"w": 23,
+				"h": 15
 			},
 			"duration": 1000
 		}
@@ -29,8 +29,8 @@
 		"image": "sticker-cats.png",
 		"format": "I8",
 		"size": {
-			"w": 19,
-			"h": 10
+			"w": 23,
+			"h": 15
 		},
 		"scale": "1",
 		"frameTags": [],
@@ -51,27 +51,12 @@
 						"bounds": {
 							"x": 0,
 							"y": 0,
-							"w": 19,
-							"h": 10
+							"w": 23,
+							"h": 15
 						},
 						"pivot": {
 							"x": 0,
 							"y": 0
-						}
-					}
-				]
-			},
-			{
-				"name": "hit",
-				"color": "#ff0000ff",
-				"keys": [
-					{
-						"frame": 0,
-						"bounds": {
-							"x": 0,
-							"y": 0,
-							"w": 18,
-							"h": 9
 						}
 					}
 				]

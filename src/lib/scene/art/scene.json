@@ -1,90 +1,149 @@
 {
-	"native": { "w": 480, "h": 270 },
-	"parallax": { "maxOffsetX": 6, "maxOffsetY": 3 },
-	"layers": [
-		{ "id": "far", "parallax": 1 },
-		{ "id": "wall", "parallax": 0.35 },
-		{ "id": "near", "parallax": 0 },
-		{ "id": "front", "parallax": -0.5 },
-		{ "id": "foreground", "parallax": -1 }
-	],
-	"crop": { "x": 172, "y": 62, "w": 248, "h": 186 },
+	"native": { "w": 880, "h": 480 },
+	"parallax": { "maxOffsetX": 4, "maxOffsetY": 2 },
+	"layouts": {
+		"landscape": {
+			"focus": { "x": 220, "y": 110, "w": 478, "h": 250 },
+			"places": {
+				"window": { "x": 346, "y": 190, "w": 78, "h": 96 },
+				"sign": { "x": 512, "y": 118, "w": 178, "h": 60 },
+				"cork": { "x": 547, "y": 190, "w": 108, "h": 66 },
+				"clock": { "x": 248, "y": 130, "w": 40, "h": 40 },
+				"swatch": { "x": 300, "y": 134, "w": 16, "h": 34 },
+				"radio": { "x": 316, "y": 347 },
+				"bookcase": { "x": 92, "y": 150 },
+				"plant": { "x": 140, "y": 150 }
+			}
+		},
+		"portrait": {
+			"focus": { "x": 351, "y": 32, "w": 180, "h": 328 },
+			"places": {
+				"window": { "x": 356, "y": 184, "w": 78, "h": 96 },
+				"sign": { "x": 351, "y": 46, "w": 178, "h": 60 },
+				"cork": { "x": 351, "y": 110, "w": 108, "h": 66 },
+				"clock": { "x": 467, "y": 117, "w": 40, "h": 40 },
+				"swatch": { "x": 513, "y": 119, "w": 16, "h": 34 },
+				"radio": { "x": 378, "y": 356 },
+				"bookcase": { "x": 230, "y": 150 },
+				"plant": { "x": 278, "y": 150 }
+			}
+		},
+		"short": {
+			"focus": { "x": 248, "y": 172, "w": 358, "h": 180 },
+			"places": {
+				"window": { "x": 100, "y": 190, "w": 78, "h": 96 },
+				"sign": { "x": 252, "y": 186, "w": 178, "h": 60 },
+				"cork": { "x": 494, "y": 180, "w": 108, "h": 66 },
+				"clock": { "x": 258, "y": 252, "w": 40, "h": 40 },
+				"swatch": { "x": 306, "y": 255, "w": 16, "h": 34 },
+				"radio": { "x": 316, "y": 347 }
+			}
+		}
+	},
+	"insets": {
+		"signText": { "x": 9, "y": 8, "w": 160, "h": 42 },
+		"radio": { "x": -19, "y": -32, "w": 41, "h": 32 },
+		"notes": [
+			{ "x": 7, "y": 7, "w": 86, "h": 12 },
+			{ "x": 13, "y": 21, "w": 70, "h": 12 },
+			{ "x": 8, "y": 35, "w": 50, "h": 12 },
+			{ "x": 26, "y": 49, "w": 56, "h": 12 }
+		]
+	},
+	"clock": { "centre": [20, 20], "hour": 9, "minute": 13, "second": 15 },
 	"sky": {
-		"top": 22,
-		"bottom": 122,
 		"bands": 7,
 		"orbs": {
-			"morning": { "x": 66, "y": 96, "r": 7 },
-			"day": { "x": 136, "y": 40, "r": 6 },
-			"dusk": { "x": 84, "y": 106, "r": 10 },
-			"night": { "x": 124, "y": 44, "r": 7, "moon": true }
+			"morning": { "u": 0.28, "v": 0.74, "r": 7 },
+			"day": { "u": 0.7, "v": 0.26, "r": 6 },
+			"dusk": { "u": 0.32, "v": 0.8, "r": 9 },
+			"night": { "u": 0.68, "v": 0.28, "r": 7, "moon": true }
 		},
 		"stars": [
-			[48, 30],
-			[60, 52],
-			[72, 36],
-			[86, 28],
-			[92, 60],
-			[106, 34],
-			[114, 52],
-			[132, 30],
-			[140, 62],
-			[150, 40],
-			[54, 78],
-			[146, 80],
-			[78, 82],
-			[102, 76]
+			[0.08, 0.1],
+			[0.24, 0.3],
+			[0.4, 0.12],
+			[0.55, 0.05],
+			[0.62, 0.38],
+			[0.8, 0.14],
+			[0.9, 0.34],
+			[0.15, 0.46],
+			[0.35, 0.52],
+			[0.74, 0.52],
+			[0.5, 0.26],
+			[0.87, 0.05],
+			[0.04, 0.28],
+			[0.95, 0.5]
 		]
 	},
 	"lights": {
 		"shaft": {
 			"kind": "shaft",
-			"layer": "wall",
 			"color": "shaft",
+			"place": "window",
 			"polygon": [
-				[40, 120],
-				[156, 120],
-				[292, 232],
-				[160, 232]
+				[0, 104],
+				[78, 104],
+				[238, 300],
+				[-60, 300]
 			]
 		},
+		"signPool": { "kind": "pool", "color": "lampGlow", "place": "sign" },
+		"corkPool": { "kind": "pool", "color": "lampGlow", "place": "cork" },
 		"lamp": {
 			"kind": "glow",
-			"layer": "near",
 			"color": "lampGlow",
-			"x": 178,
-			"y": 138,
-			"rx": 92,
-			"ry": 66
+			"x": 550,
+			"y": 331,
+			"rx": 48,
+			"ry": 40
 		},
 		"screen": {
 			"kind": "glow",
-			"layer": "near",
 			"color": "screen",
-			"x": 254,
-			"y": 100,
-			"rx": 30,
-			"ry": 28
+			"x": 456,
+			"y": 238,
+			"rx": 22,
+			"ry": 16
 		}
 	},
 	"draw": [
 		{ "procedural": "sky", "layer": "far" },
 		{ "procedural": "stars", "layer": "far" },
 		{ "procedural": "orb", "layer": "far" },
-		{ "sprite": "clouds", "layer": "far", "at": [40, 30], "weight": "day" },
-		{ "sprite": "city", "layer": "far", "at": [20, 90], "tag": "unlit", "dark": "lit" },
-
-		{ "sprite": "wall", "layer": "wall", "at": [-6, 0] },
-		{ "sprite": "window", "layer": "wall", "at": [30, 20] },
-		{ "sprite": "curtains", "layer": "wall", "at": [18, 12] },
-		{ "sprite": "poster", "layer": "wall", "at": [266, 30] },
-		{ "sprite": "shelf", "layer": "wall", "at": [360, 64] },
-		{ "sprite": "floor-plant", "layer": "wall", "at": [-4, 108] },
-
-		{ "sprite": "floor", "layer": "near", "at": [0, 206] },
-		{ "sprite": "rug", "layer": "near", "at": [127, 226] },
-		{ "sprite": "chair", "layer": "near", "at": [222, 104] },
-		{ "sprite": "me", "layer": "near", "at": [254, 166], "tag": "type" },
+		{ "sprite": "clouds", "layer": "far", "place": "window", "offset": [-24, 6], "weight": "day" },
+		{
+			"sprite": "city",
+			"layer": "far",
+			"place": "window",
+			"offset": [-40, 64],
+			"tag": "unlit",
+			"dark": "lit"
+		},
+		{ "sprite": "room", "layer": "wall", "at": [0, 0] },
+		{ "cut": "window" },
+		{ "sprite": "window", "layer": "wall", "place": "window" },
+		{ "sprite": "bookcase", "layer": "wall", "place": "bookcase" },
+		{ "sprite": "plant", "layer": "wall", "place": "plant" },
+		{ "sprite": "sign", "layer": "wall", "place": "sign", "tag": "unlit", "dark": "lit" },
+		{ "sprite": "corkboard", "layer": "wall", "place": "cork" },
+		{ "sprite": "clock", "layer": "wall", "place": "clock" },
+		{ "procedural": "clockHands", "layer": "wall" },
+		{ "sprite": "swatch", "layer": "wall", "place": "swatch" },
+		{ "sprite": "margot", "layer": "wall", "place": "window", "offset": [39, 101], "tag": "sleep" },
+		{
+			"sprite": "zzz",
+			"layer": "wall",
+			"attach": ["margot", "zzz"],
+			"tag": "float",
+			"requires": "asleep"
+		},
+		{ "light": "shaft" },
+		{ "light": "signPool" },
+		{ "light": "corkPool" },
+		{ "sprite": "chair", "layer": "near", "at": [436, 233] },
+		{ "sprite": "me-legs", "layer": "near", "at": [400, 350] },
+		{ "sprite": "me", "layer": "near", "at": [462, 240], "tag": "type" },
 		{
 			"sprite": "me-face",
 			"layer": "near",
@@ -92,45 +151,28 @@
 			"tag": "none",
 			"dark": "glint"
 		},
+		{ "sprite": "desk", "layer": "near", "at": [263, 335] },
+		{ "sprite": "me-arms", "layer": "near", "at": [392, 264], "follow": "me" },
+		{ "sprite": "laptop", "layer": "near", "at": [365, 299] },
+		{ "sprite": "sticker-github", "layer": "near", "at": [369, 303] },
+		{ "sprite": "sticker-name", "layer": "near", "at": [396, 302] },
+		{ "sprite": "sticker-code", "layer": "near", "at": [417, 317] },
+		{ "sprite": "sticker-cats", "layer": "near", "at": [410, 330] },
+		{ "sprite": "sticker-scroll", "layer": "near", "at": [433, 331], "requires": "cv" },
+		{ "sprite": "radio", "layer": "near", "place": "radio", "tag": "on", "requires": "sound" },
+		{ "sprite": "radio", "layer": "near", "place": "radio", "tag": "off", "requires": "!sound" },
+		{ "sprite": "lamp", "layer": "near", "at": [561, 348], "tag": "off", "dark": "on" },
+		{ "sprite": "coffee", "layer": "near", "at": [477, 359], "tag": "level5" },
+		{ "light": "lamp" },
 		{ "light": "screen" },
-		{ "sprite": "desk", "layer": "near", "at": [108, 160] },
-		{ "sprite": "laptop", "layer": "near", "at": [254, 164] },
-		{ "sprite": "sticker-github", "layer": "near", "at": [229, 129] },
-		{ "sprite": "sticker-name", "layer": "near", "at": [251, 127] },
-		{ "sprite": "sticker-cats", "layer": "near", "at": [261, 142] },
-		{ "sprite": "sticker-code", "layer": "near", "at": [231, 145] },
-		{ "sprite": "sticker-scroll", "layer": "near", "at": [247, 149], "requires": "cv" },
-		{
-			"sprite": "coffee",
-			"layer": "near",
-			"at": [194, 163],
-			"attach": ["me", "cup"],
-			"tag": "level5"
-		},
-		{ "sprite": "lamp", "layer": "near", "at": [140, 164], "tag": "off", "dark": "on" },
-		{ "sprite": "myles", "layer": "near", "at": [326, 164], "tag": "idle" },
-		{ "again": "me", "clip": [290, 60, 70, 99] },
+		{ "sprite": "myles", "layer": "near", "at": [510, 353], "tag": "idle" },
+		{ "sprite": "me-hand", "layer": "near", "at": [492, 279], "follow": "me" },
 		{
 			"sprite": "hearts",
 			"layer": "near",
 			"attach": ["myles", "hearts"],
 			"tag": "float",
 			"requires": "hearts"
-		},
-		{ "light": "shaft" },
-		{ "light": "lamp" },
-
-		{ "sprite": "cushion", "layer": "front", "at": [378, 258], "tag": "back" },
-		{ "sprite": "margot", "layer": "front", "at": [378, 246], "tag": "sleep" },
-		{ "sprite": "cushion", "layer": "front", "at": [378, 258], "tag": "front" },
-		{
-			"sprite": "zzz",
-			"layer": "front",
-			"attach": ["margot", "zzz"],
-			"tag": "float",
-			"requires": "asleep"
-		},
-
-		{ "sprite": "leaves", "layer": "foreground", "at": [-10, 206] }
+		}
 	]
 }

@@ -9,6 +9,5 @@ export const sfxFiles = {
 		'audio/sfx/sleepy-chirp-2',
 		'audio/sfx/sleepy-chirp-3'
 	],
-	'stretch-yawn': ['audio/sfx/stretch-yawn-1'],
-	'meow-soft': ['audio/sfx/meow-soft-1', 'audio/sfx/meow-soft-2']
+	'stretch-yawn': ['audio/sfx/stretch-yawn-1']
 } as const;

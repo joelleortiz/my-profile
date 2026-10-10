@@ -5,504 +5,460 @@
 			"frame": {
 				"x": 0,
 				"y": 0,
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
 			"sourceSize": {
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
-			"duration": 900
+			"duration": 1600
 		},
 		{
 			"filename": "margot 1.aseprite",
 			"frame": {
-				"x": 116,
+				"x": 62,
 				"y": 0,
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
 			"sourceSize": {
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
-			"duration": 700
+			"duration": 1600
 		},
 		{
 			"filename": "margot 2.aseprite",
 			"frame": {
-				"x": 232,
+				"x": 124,
 				"y": 0,
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
 			"sourceSize": {
-				"w": 116,
-				"h": 44
-			},
-			"duration": 900
-		},
-		{
-			"filename": "margot 3.aseprite",
-			"frame": {
-				"x": 348,
-				"y": 0,
-				"w": 116,
-				"h": 44
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 116,
-				"h": 44
-			},
-			"sourceSize": {
-				"w": 116,
-				"h": 44
-			},
-			"duration": 700
-		},
-		{
-			"filename": "margot 4.aseprite",
-			"frame": {
-				"x": 464,
-				"y": 0,
-				"w": 116,
-				"h": 44
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 116,
-				"h": 44
-			},
-			"sourceSize": {
-				"w": 116,
-				"h": 44
-			},
-			"duration": 80
-		},
-		{
-			"filename": "margot 5.aseprite",
-			"frame": {
-				"x": 580,
-				"y": 0,
-				"w": 116,
-				"h": 44
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 116,
-				"h": 44
-			},
-			"sourceSize": {
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
 			"duration": 90
 		},
 		{
-			"filename": "margot 6.aseprite",
+			"filename": "margot 3.aseprite",
 			"frame": {
-				"x": 696,
+				"x": 0,
 				"y": 0,
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
 			"sourceSize": {
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
-			"duration": 80
+			"duration": 120
+		},
+		{
+			"filename": "margot 4.aseprite",
+			"frame": {
+				"x": 124,
+				"y": 0,
+				"w": 62,
+				"h": 36
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 62,
+				"h": 36
+			},
+			"sourceSize": {
+				"w": 62,
+				"h": 36
+			},
+			"duration": 90
+		},
+		{
+			"filename": "margot 5.aseprite",
+			"frame": {
+				"x": 186,
+				"y": 0,
+				"w": 62,
+				"h": 36
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 62,
+				"h": 36
+			},
+			"sourceSize": {
+				"w": 62,
+				"h": 36
+			},
+			"duration": 160
+		},
+		{
+			"filename": "margot 6.aseprite",
+			"frame": {
+				"x": 248,
+				"y": 0,
+				"w": 62,
+				"h": 36
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 62,
+				"h": 36
+			},
+			"sourceSize": {
+				"w": 62,
+				"h": 36
+			},
+			"duration": 200
 		},
 		{
 			"filename": "margot 7.aseprite",
 			"frame": {
-				"x": 812,
+				"x": 0,
 				"y": 0,
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
 			"sourceSize": {
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
 			"duration": 160
 		},
 		{
 			"filename": "margot 8.aseprite",
 			"frame": {
-				"x": 928,
+				"x": 310,
 				"y": 0,
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
 			"sourceSize": {
-				"w": 116,
-				"h": 44
-			},
-			"duration": 240
-		},
-		{
-			"filename": "margot 9.aseprite",
-			"frame": {
-				"x": 1044,
-				"y": 0,
-				"w": 116,
-				"h": 44
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 116,
-				"h": 44
-			},
-			"sourceSize": {
-				"w": 116,
-				"h": 44
-			},
-			"duration": 160
-		},
-		{
-			"filename": "margot 10.aseprite",
-			"frame": {
-				"x": 1160,
-				"y": 0,
-				"w": 116,
-				"h": 44
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 116,
-				"h": 44
-			},
-			"sourceSize": {
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
 			"duration": 200
 		},
 		{
-			"filename": "margot 11.aseprite",
+			"filename": "margot 9.aseprite",
 			"frame": {
-				"x": 1276,
+				"x": 372,
 				"y": 0,
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
 			"sourceSize": {
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
 			"duration": 600
 		},
 		{
-			"filename": "margot 12.aseprite",
+			"filename": "margot 10.aseprite",
 			"frame": {
-				"x": 1392,
+				"x": 434,
 				"y": 0,
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
 			"sourceSize": {
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
 			"duration": 260
 		},
 		{
-			"filename": "margot 13.aseprite",
+			"filename": "margot 11.aseprite",
 			"frame": {
-				"x": 1508,
+				"x": 372,
 				"y": 0,
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
 			"sourceSize": {
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
 			"duration": 700
 		},
 		{
-			"filename": "margot 14.aseprite",
+			"filename": "margot 12.aseprite",
 			"frame": {
-				"x": 1624,
+				"x": 310,
 				"y": 0,
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
 			"sourceSize": {
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
 			"duration": 240
+		},
+		{
+			"filename": "margot 13.aseprite",
+			"frame": {
+				"x": 0,
+				"y": 0,
+				"w": 62,
+				"h": 36
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 62,
+				"h": 36
+			},
+			"sourceSize": {
+				"w": 62,
+				"h": 36
+			},
+			"duration": 240
+		},
+		{
+			"filename": "margot 14.aseprite",
+			"frame": {
+				"x": 372,
+				"y": 0,
+				"w": 62,
+				"h": 36
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 62,
+				"h": 36
+			},
+			"sourceSize": {
+				"w": 62,
+				"h": 36
+			},
+			"duration": 220
 		},
 		{
 			"filename": "margot 15.aseprite",
 			"frame": {
-				"x": 1740,
+				"x": 496,
 				"y": 0,
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
 			"sourceSize": {
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
-			"duration": 240
+			"duration": 220
 		},
 		{
 			"filename": "margot 16.aseprite",
 			"frame": {
-				"x": 1856,
+				"x": 558,
 				"y": 0,
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
 			"sourceSize": {
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
-			"duration": 220
+			"duration": 260
 		},
 		{
 			"filename": "margot 17.aseprite",
 			"frame": {
-				"x": 0,
-				"y": 44,
-				"w": 116,
-				"h": 44
+				"x": 620,
+				"y": 0,
+				"w": 62,
+				"h": 36
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
 			"sourceSize": {
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
-			"duration": 220
+			"duration": 900
 		},
 		{
 			"filename": "margot 18.aseprite",
 			"frame": {
-				"x": 116,
-				"y": 44,
-				"w": 116,
-				"h": 44
+				"x": 496,
+				"y": 0,
+				"w": 62,
+				"h": 36
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
 			"sourceSize": {
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
 			"duration": 260
 		},
 		{
 			"filename": "margot 19.aseprite",
 			"frame": {
-				"x": 232,
-				"y": 44,
-				"w": 116,
-				"h": 44
+				"x": 372,
+				"y": 0,
+				"w": 62,
+				"h": 36
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
 			"sourceSize": {
-				"w": 116,
-				"h": 44
-			},
-			"duration": 900
-		},
-		{
-			"filename": "margot 20.aseprite",
-			"frame": {
-				"x": 348,
-				"y": 44,
-				"w": 116,
-				"h": 44
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 116,
-				"h": 44
-			},
-			"sourceSize": {
-				"w": 116,
-				"h": 44
-			},
-			"duration": 260
-		},
-		{
-			"filename": "margot 21.aseprite",
-			"frame": {
-				"x": 464,
-				"y": 44,
-				"w": 116,
-				"h": 44
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 116,
-				"h": 44
-			},
-			"sourceSize": {
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
 			"duration": 240
 		},
 		{
-			"filename": "margot 22.aseprite",
+			"filename": "margot 20.aseprite",
 			"frame": {
-				"x": 580,
-				"y": 44,
-				"w": 116,
-				"h": 44
+				"x": 0,
+				"y": 0,
+				"w": 62,
+				"h": 36
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
 			"sourceSize": {
-				"w": 116,
-				"h": 44
+				"w": 62,
+				"h": 36
 			},
 			"duration": 300
 		}
@@ -513,51 +469,51 @@
 		"image": "margot.png",
 		"format": "I8",
 		"size": {
-			"w": 1972,
-			"h": 88
+			"w": 682,
+			"h": 36
 		},
 		"scale": "1",
 		"frameTags": [
 			{
 				"name": "sleep",
 				"from": 0,
-				"to": 3,
+				"to": 1,
 				"direction": "forward",
 				"color": "#000000ff"
 			},
 			{
 				"name": "ear",
-				"from": 4,
-				"to": 6,
+				"from": 2,
+				"to": 4,
 				"direction": "forward",
 				"color": "#000000ff"
 			},
 			{
 				"name": "paw",
-				"from": 7,
-				"to": 9,
+				"from": 5,
+				"to": 7,
 				"direction": "forward",
 				"color": "#000000ff"
 			},
 			{
 				"name": "wake",
-				"from": 10,
-				"to": 15,
+				"from": 8,
+				"to": 13,
 				"direction": "forward",
 				"color": "#000000ff"
 			},
 			{
 				"name": "stretch",
-				"from": 16,
-				"to": 22,
+				"from": 14,
+				"to": 20,
 				"direction": "forward",
 				"color": "#000000ff",
 				"data": "0:margot-stretch"
 			},
 			{
 				"name": "ear-react",
-				"from": 4,
-				"to": 6,
+				"from": 2,
+				"to": 4,
 				"direction": "forward",
 				"color": "#000000ff",
 				"data": "0:margot-wake"
@@ -580,12 +536,12 @@
 						"bounds": {
 							"x": 0,
 							"y": 0,
-							"w": 116,
-							"h": 44
+							"w": 62,
+							"h": 36
 						},
 						"pivot": {
-							"x": 68,
-							"y": 44
+							"x": 31,
+							"y": 33
 						}
 					}
 				]
@@ -597,10 +553,10 @@
 					{
 						"frame": 0,
 						"bounds": {
-							"x": 20,
-							"y": 2,
-							"w": 92,
-							"h": 42
+							"x": 4,
+							"y": 12,
+							"w": 56,
+							"h": 23
 						}
 					}
 				]
@@ -612,8 +568,8 @@
 					{
 						"frame": 0,
 						"bounds": {
-							"x": 26,
-							"y": 0,
+							"x": 10,
+							"y": 12,
 							"w": 1,
 							"h": 1
 						}

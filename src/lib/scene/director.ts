@@ -12,7 +12,8 @@ type Action = () => Promise<void>;
 const FULL_CUP = 5;
 const REFILL_MS = 60_000;
 const REDUCED_POSE_MS = 2200;
-const MYLES_X = 326;
+const REDUCED_BLINK_MS = 150;
+const REDUCED_SLOW_BLINK_MS = 700;
 
 const between = (min: number, max: number) => min + Math.random() * (max - min);
 const chance = (p: number) => Math.random() < p;
@@ -32,10 +33,6 @@ class Actor {
 
 	runIfFree(action: Action): void {
 		if (!this.busy) this.start(action);
-	}
-
-	whenFree(): Promise<void> {
-		return this.current ?? Promise.resolve();
 	}
 
 	private start(action: Action): void {
@@ -60,13 +57,15 @@ export class Director {
 	private mylesHeld = false;
 	private coffeeLevel = FULL_CUP;
 	private heartsToken = 0;
+	/** While a sip carries the cup, the cup's level changes when it is put down, not before. */
+	private sipping = false;
 
 	constructor(engine: SceneEngine, options: DirectorOptions) {
 		this.engine = engine;
 		this.sound = options.sound;
 		this.reduced = options.reducedMotion;
 		this.settle();
-		this.every([3000, 6000], () => this.me.runIfFree(() => this.blink()));
+		this.every([3000, 6000], () => this.me.runIfFree(() => this.blink()), { reduced: true });
 		this.every([10_000, 20_000], () => this.me.runIfFree(() => this.pet()));
 		this.every([15_000, 30_000], () => {
 			if (this.coffeeLevel > 0) this.me.runIfFree(() => this.sip());
@@ -74,9 +73,13 @@ export class Director {
 		this.every([35_000, 70_000], () =>
 			this.me.runIfFree(() => (chance(0.5) ? this.stretch() : this.glance()))
 		);
-		this.every([4000, 9000], () => {
-			if (!this.mylesHeld) this.myles.runIfFree(() => this.mylesIdle());
-		});
+		this.every(
+			[4000, 9000],
+			() => {
+				if (!this.mylesHeld) this.myles.runIfFree(() => this.mylesIdle());
+			},
+			{ reduced: true }
+		);
 		this.every([6000, 14_000], () => this.margot.runIfFree(() => this.margotDream()));
 	}
 
@@ -89,6 +92,8 @@ export class Director {
 	handleEvent(event: string): void {
 		this.sound(event);
 		if (event === 'cup-down') this.drinkOneStep();
+		// Myles leans into Joelle's hand the moment it lands, in step with the purr.
+		if (event === 'pet-start') this.engine.play('myles', 'pet', { loop: true });
 	}
 
 	setReducedMotion(reduced: boolean): void {
@@ -113,20 +118,31 @@ export class Director {
 		this.engine.setFlag('hearts', false);
 	}
 
-	private async every([min, max]: [number, number], action: () => void): Promise<void> {
+	/** Runs an action at random intervals; only blinks also run with reduced motion. */
+	private async every(
+		[min, max]: [number, number],
+		action: () => void,
+		{ reduced = false } = {}
+	): Promise<void> {
 		while (this.alive) {
 			await this.engine.wait(between(min, max));
-			if (this.alive && !this.reduced) action();
+			if (this.alive && (reduced || !this.reduced)) action();
 		}
 	}
 
 	private async pet(): Promise<void> {
-		if (this.reduced)
-			return this.holdPose(['me', 'pet-stroke'], ['myles', 'pet'], 'pet-start', 'pet-end');
-		await this.engine.play('me', 'pet-reach');
+		if (this.reduced) {
+			// Still frames: Joelle's hand on him, his eyes closed, and the hearts, while the purr plays.
+			this.mylesHeld = true;
+			this.engine.setFlag('hearts', true);
+			this.engine.pose('hearts', 'float', 3);
+			await this.holdPose(['me', 'pet-stroke'], ['myles', 'pet'], 'pet-start', 'pet-end');
+			this.mylesHeld = false;
+			return;
+		}
+		// No new idle starts, and the one playing gives way when the hand lands.
 		this.mylesHeld = true;
-		await this.myles.whenFree();
-		this.engine.play('myles', 'pet', { loop: true });
+		await this.engine.play('me', 'pet-reach');
 		const strokes = chance(0.5) ? 3 : 2;
 		for (let i = 0; i < strokes; i++) {
 			this.floatHearts();
@@ -138,16 +154,28 @@ export class Director {
 		this.engine.play('me', 'type', { loop: true });
 	}
 
+	/** The cup's `sip<level>` tag carries it in step with Joelle's `sip` tag. */
 	private async sip(): Promise<void> {
+		const cup = `sip${this.coffeeLevel}`;
 		if (this.reduced) {
-			await this.holdPose(['me', 'sip', 3], null, 'sip', 'cup-down');
+			await this.holdPose(['me', 'sip', 3], ['coffee', cup, 3], 'sip', 'cup-down');
 			return this.drinkOneStep();
 		}
+		this.sipping = true;
+		this.engine.play('coffee', cup);
 		await this.engine.play('me', 'sip');
+		this.sipping = false;
+		this.showCoffee();
 		this.engine.play('me', 'type', { loop: true });
 	}
 
 	private async blink(): Promise<void> {
+		if (this.reduced) {
+			// Still frames, so a blink stays even with reduced motion.
+			this.engine.pose('me-face', 'blink', 1);
+			await this.engine.wait(REDUCED_BLINK_MS);
+			return this.engine.pose('me-face', 'none');
+		}
 		await this.engine.play('me-face', 'blink');
 		this.engine.play('me-face', 'none', { loop: true });
 	}
@@ -162,12 +190,29 @@ export class Director {
 		this.engine.play('me', 'type', { loop: true });
 	}
 
+	/**
+	 * A swish, a slow blink or an ear turned out, and now and then a look toward the side the
+	 * pointer is on (never on touch screens, where there is no pointer). With reduced motion,
+	 * only a slow blink, as a still frame.
+	 */
 	private async mylesIdle(): Promise<void> {
+		if (this.reduced) {
+			this.engine.pose('myles', 'blink', 1);
+			await this.engine.wait(REDUCED_SLOW_BLINK_MS);
+			if (!this.mylesHeld) this.engine.pose('myles', 'idle');
+			return;
+		}
 		const pointer = this.engine.pointerX();
-		const lookRight = pointer !== null && pointer > MYLES_X && chance(0.6);
-		const tag = lookRight ? 'look' : chance(0.5) ? 'swish' : chance(0.6) ? 'blink' : 'ear';
+		const myles = this.engine.hitArea('myles');
+		const look =
+			pointer !== null && myles && chance(0.35)
+				? pointer < myles.x + myles.w / 2
+					? 'look-left'
+					: 'look-right'
+				: null;
+		const tag = look ?? (chance(0.4) ? 'swish' : chance(0.55) ? 'blink' : 'ear');
 		await this.engine.play('myles', tag);
-		this.engine.play('myles', 'idle', { loop: true });
+		if (!this.mylesHeld) this.engine.play('myles', 'idle', { loop: true });
 	}
 
 	private async margotDream(): Promise<void> {
@@ -193,12 +238,12 @@ export class Director {
 
 	private async holdPose(
 		main: [string, string, number?],
-		partner: [string, string] | null,
+		partner: [string, string, number?] | null,
 		startSound: string,
 		endSound: string | null
 	): Promise<void> {
 		this.engine.pose(main[0], main[1], main[2] ?? 0);
-		if (partner) this.engine.pose(partner[0], partner[1]);
+		if (partner) this.engine.pose(partner[0], partner[1], partner[2] ?? 0);
 		this.sound(startSound);
 		await this.engine.wait(REDUCED_POSE_MS);
 		if (endSound) this.sound(endSound);
@@ -216,7 +261,7 @@ export class Director {
 	private drinkOneStep(): void {
 		if (this.coffeeLevel === 0) return;
 		this.coffeeLevel--;
-		this.showCoffee();
+		if (!this.sipping) this.showCoffee();
 		if (this.coffeeLevel === 0) this.refillLater();
 	}
 

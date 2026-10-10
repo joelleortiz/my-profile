@@ -39,7 +39,13 @@ const KEY_BASE: Record<Material, string> = {
 	sticker1: '#5ae0d0',
 	sticker2: '#ffd36e',
 	sticker3: '#9c8cff',
-	building: '#262a52'
+	building: '#262a52',
+	hoodie: '#2b2a3a',
+	jeans: '#3b4468',
+	cork: '#b98a5c',
+	wood: '#7c5c4a',
+	paper: '#ece6d8',
+	radio: '#4f8f93'
 };
 const SHADOW_HUE = 245;
 const LIGHT_HUE = 190;

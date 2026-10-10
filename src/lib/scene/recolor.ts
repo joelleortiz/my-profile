@@ -24,13 +24,16 @@ export interface ColorTable {
 	transform: ColorTransform | null;
 }
 
+/** Materials that give off light: the tint after dark leaves them as they are. */
+export const EMISSIVE: ReadonlySet<string> = new Set(['lampGlow', 'screen']);
+
 export function colorTable(palette: PaletteKey, transform: ColorTransform | null): ColorTable {
 	const ramps = paletteRamps(palette);
 	const keys = new Uint32Array(MATERIAL_COUNT * 4);
 	keyPalette.materials.forEach((m, mi) => {
 		SHADES.forEach((s, si) => {
 			let rgb = hexToRgb(ramps[m as Material][s]);
-			if (transform) rgb = transform(rgb);
+			if (transform && !EMISSIVE.has(m)) rgb = transform(rgb);
 			keys[mi * 4 + si] = pack(Math.round(rgb[0]), Math.round(rgb[1]), Math.round(rgb[2]));
 		});
 	});

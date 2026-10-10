@@ -19,8 +19,15 @@ Everything here is original to joelleortiz.me. Nothing requires attribution, so 
 | pet-trill | `sfx/pet-trill-1..3` | Synthesised by `scripts/music/sfx.py`, a stylised chiptune "mrrp" | **Placeholder** |
 | sleepy-chirp | `sfx/sleepy-chirp-1..3` | Synthesised by `scripts/music/sfx.py` | **Placeholder** |
 | stretch-yawn | `sfx/stretch-yawn-1` | Synthesised by `scripts/music/sfx.py` | **Placeholder** |
-| meow-soft | `sfx/meow-soft-1..2` | Synthesised by `scripts/music/sfx.py` | **Placeholder** |
 
-The key taps, the on/off blips and the vinyl crackle are synthesised live in the browser by `src/lib/audio/` and have no files.
+The keyboard, the on/off blips and the vinyl crackle are synthesised live in the browser by `src/lib/audio/` and have no files.
+
+## Reference recording (not used on the site)
+
+The keyboard's colour and envelope were fitted to measurements of this CC0 recording; no audio from it plays on the site.
+
+| Recording | Licence |
+| --- | --- |
+| [Mechanical keyboard typing sounds](https://freesound.org/people/Reina0613/sounds/709460/) by Reina0613: an ikki68 Aurora with hand-lubed WS Brown tactile switches | CC0 1.0 |
 
 When a sound is replaced, update its row with where the new audio came from (a recording, a sound-generation site and its terms, or a Freesound link and licence). Anything under CC-BY needs a credit on the site.

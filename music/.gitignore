@@ -1,5 +1,5 @@
 # Large binaries and intermediates (SoundFont, WAV stems, mixes). Re-created by scripts/music/render.py.
 work/
 
-# Review renders (about 3 MB each). Re-created by scripts/music/previews.py.
+# Review renders. Re-created by scripts/music/render.py --preview and scripts/music/typing_previews.py.
 previews/

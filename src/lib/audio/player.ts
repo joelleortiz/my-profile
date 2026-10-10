@@ -4,17 +4,23 @@ import {
 	type SfxId,
 	SoundBank,
 	loadLoop,
-	pickRandom,
 	preferredFormat
 } from './assets';
 import { createCrackle } from './crackle';
 import type { SceneSound, SceneTime } from './index';
+import { Keyboard } from './keyboard.ts';
+import {
+	GAIN_SPREAD_DB,
+	type LevelName,
+	type Levels,
+	PITCH_SPREAD,
+	type SoundGroup,
+	dbToGain
+} from './levels';
 import { PurrLoop } from './purr';
-import { type BlipDirection, keyTapBuffers, playBlip } from './synth';
+import { type BlipDirection, playBlip } from './synth';
+import { ONSET_JITTER_MS } from './typing.ts';
 
-const MUSIC_GAIN = 0.35;
-const CRACKLE_GAIN = MUSIC_GAIN;
-const SFX_GAIN = 0.6;
 const LOOP_END_SECONDS = 128;
 const FADE_IN_SECONDS = 1.5;
 const FADE_OUT_SECONDS = 0.5;
@@ -24,20 +30,16 @@ const LOWPASS_HZ: Record<SceneTime, number> = {
 	dusk: 10000,
 	night: 6000
 };
-const KEY_TAP_GAIN_DB = -10;
-const PITCH_SPREAD = 0.03;
-const GAIN_SPREAD_DB = 2;
 
 type OneShotEvent = Exclude<SceneSound, 'type' | 'pet-start' | 'pet-end' | 'palette-change'>;
 
-const ONE_SHOTS: Record<OneShotEvent, readonly [SfxId, number]> = {
-	'margot-wake': ['sleepy-chirp', 0],
-	'margot-stretch': ['stretch-yawn', 0],
-	sip: ['sip', -2],
-	'cup-down': ['cup-down', 0],
-	'sticker-hover': ['sticker', -14],
-	'sticker-click': ['sticker', 0],
-	'palette-open': ['meow-soft', -4]
+const ONE_SHOTS: Record<OneShotEvent, readonly [SfxId, SoundGroup]> = {
+	'margot-wake': ['sleepy-chirp', 'cats'],
+	'margot-stretch': ['stretch-yawn', 'cats'],
+	sip: ['sip', 'foley'],
+	'cup-down': ['cup-down', 'foley'],
+	'sticker-hover': ['sticker', 'stickerHover'],
+	'sticker-click': ['sticker', 'stickerClick']
 };
 
 export interface PlayerStatus {
@@ -48,6 +50,7 @@ export interface PlayerStatus {
 	sfx: Record<SfxId, LoadState>;
 	purring: boolean;
 	lowpassHz: number;
+	busDb: { music: number; crackle: number; sfx: number };
 	levelDb: { rms: number; peak: number };
 }
 
@@ -61,18 +64,22 @@ export class Player {
 		type: 'lowpass',
 		frequency: 20000
 	});
-	private readonly musicLevel = new GainNode(this.context, { gain: MUSIC_GAIN });
-	private readonly crackleLevel = new GainNode(this.context, { gain: CRACKLE_GAIN });
-	private readonly sfx = new GainNode(this.context, { gain: SFX_GAIN });
+	private readonly musicLevel = new GainNode(this.context);
+	private readonly crackleLevel = new GainNode(this.context);
+	private readonly sfx = new GainNode(this.context);
 	private readonly bank = new SoundBank();
-	private readonly keyTaps = keyTapBuffers(this.context);
+	private readonly keyboard = new Keyboard(this.context);
 	private readonly purr = new PurrLoop(this.context, this.sfx);
+	readonly unlocked = whenRunning(this.context);
 	private on = false;
 	private loading?: Promise<void>;
 	private musicState: LoadState = 'idle';
 	private crackleState: LoadState = 'idle';
+	private readonly levels: Levels;
 
-	constructor() {
+	constructor(levels: Levels) {
+		this.levels = levels;
+		this.applyLevels();
 		this.musicLowpass.connect(this.musicLevel).connect(this.bed);
 		this.crackleLevel.connect(this.bed);
 		this.bed.connect(this.master);
@@ -87,8 +94,13 @@ export class Player {
 		this.setTimeOfDay(time, 0);
 		this.blip('on');
 		this.fadeBed(1, FADE_IN_SECONDS, this.context.currentTime);
-		await resumed;
-		await (this.loading ??= this.loadAll());
+		this.loading ??= this.loadAll();
+		await Promise.all([resumed, this.loading]);
+	}
+
+	/** Retries a start that the browser held back until a gesture it accepts. */
+	unlock(): Promise<void> {
+		return this.context.resume();
 	}
 
 	async stop(): Promise<void> {
@@ -104,10 +116,10 @@ export class Player {
 		if (document.hidden) return;
 		switch (sound) {
 			case 'type':
-				return this.playBuffer(pickRandom(this.keyTaps), KEY_TAP_GAIN_DB);
+				return this.playBuffer(this.keyboard.next(), 'typing', spreadOnset());
 			case 'pet-start':
-				this.playSfx('pet-trill', 0);
-				return this.purr.start(this.bank.pick('purr'));
+				this.playSfx('pet-trill', 'cats');
+				return this.purr.start(this.bank.pick('purr'), this.gain('purr'));
 			case 'pet-end':
 				return this.purr.stop();
 			case 'palette-change':
@@ -116,6 +128,13 @@ export class Player {
 			default:
 				return this.playSfx(...ONE_SHOTS[sound]);
 		}
+	}
+
+	applyLevels(): void {
+		this.musicLevel.gain.value = this.gain('music');
+		this.crackleLevel.gain.value = this.gain('crackle');
+		this.sfx.gain.value = this.gain('sfxBus');
+		this.purr.setGain(this.gain('purr'));
 	}
 
 	setTimeOfDay(time: SceneTime, seconds: number): void {
@@ -135,6 +154,11 @@ export class Player {
 			sfx: Object.fromEntries(this.bank.states) as Record<SfxId, LoadState>,
 			purring: this.purr.playing,
 			lowpassHz: this.musicLowpass.frequency.value,
+			busDb: {
+				music: gainToDb(this.musicLevel.gain.value),
+				crackle: gainToDb(this.crackleLevel.gain.value),
+				sfx: gainToDb(this.sfx.gain.value)
+			},
 			levelDb: this.level()
 		};
 	}
@@ -177,31 +201,33 @@ export class Player {
 	}
 
 	private followVisibility(): void {
-		if (document.hidden) {
-			this.purr.stop(0);
-			void this.context.suspend();
-		} else if (this.on) {
-			void this.context.resume();
-		}
+		if (document.hidden) this.purr.stop(0);
+		else if (this.on) void this.context.resume();
 	}
 
-	private playSfx(id: SfxId, gainDb: number): void {
-		this.playBuffer(this.bank.pick(id), gainDb);
+	private playSfx(id: SfxId, group: SoundGroup): void {
+		this.playBuffer(this.bank.pick(id), group);
 	}
 
-	private playBuffer(buffer: AudioBuffer | undefined, gainDb: number): void {
+	private playBuffer(buffer: AudioBuffer | undefined, group: SoundGroup, delaySeconds = 0): void {
 		if (!buffer) return;
 		const source = new AudioBufferSourceNode(this.context, {
 			buffer,
 			playbackRate: 1 + spread(PITCH_SPREAD)
 		});
-		const level = new GainNode(this.context, { gain: dbToGain(gainDb + spread(GAIN_SPREAD_DB)) });
+		const level = new GainNode(this.context, {
+			gain: dbToGain(this.levels[group] + spread(GAIN_SPREAD_DB))
+		});
 		source.connect(level).connect(this.sfx);
-		source.start();
+		source.start(this.context.currentTime + delaySeconds);
 	}
 
 	private blip(direction: BlipDirection): number {
-		return playBlip(this.context, this.sfx, direction);
+		return playBlip(this.context, this.sfx, direction, this.gain('blips'));
+	}
+
+	private gain(name: LevelName): number {
+		return dbToGain(this.levels[name]);
 	}
 
 	private fadeBed(value: number, seconds: number, from: number): number {
@@ -226,12 +252,24 @@ function spread(amount: number): number {
 	return (Math.random() * 2 - 1) * amount;
 }
 
-function dbToGain(db: number): number {
-	return 10 ** (db / 20);
+function spreadOnset(): number {
+	return (Math.random() * ONSET_JITTER_MS) / 1000;
 }
 
 function gainToDb(gain: number): number {
 	return 20 * Math.log10(Math.max(gain, 1e-6));
+}
+
+function whenRunning(context: AudioContext): Promise<void> {
+	return new Promise((resolve) => {
+		const check = () => {
+			if (context.state !== 'running') return;
+			context.removeEventListener('statechange', check);
+			resolve();
+		};
+		context.addEventListener('statechange', check);
+		check();
+	});
 }
 
 function secondsPass(seconds: number): Promise<void> {

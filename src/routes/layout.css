@@ -6,77 +6,8 @@
 	--font-mono: 'DM Mono', ui-monospace, monospace;
 }
 
-@theme inline {
-	--color-bg: var(--bg);
-	--color-surface: var(--surface);
-	--color-ink: var(--ink);
-	--color-soft: var(--soft);
-	--color-accent: var(--accent);
-	--color-line: var(--line);
-}
-
 :root {
-	/* One device pixel in CSS px, so the scene can scale by whole device pixels. */
-	--u: 1px;
-	--gutter: clamp(16px, 4vw, 48px);
-	--frame-border: 3px;
-	--frame-shadow: 6px;
-}
-
-@media (min-resolution: 1.25dppx) {
-	:root {
-		--u: 0.8px;
-	}
-}
-@media (min-resolution: 1.5dppx) {
-	:root {
-		--u: calc(2px / 3);
-	}
-}
-@media (min-resolution: 1.75dppx) {
-	:root {
-		--u: calc(4px / 7);
-	}
-}
-@media (min-resolution: 2dppx) {
-	:root {
-		--u: 0.5px;
-	}
-}
-@media (min-resolution: 2.25dppx) {
-	:root {
-		--u: calc(4px / 9);
-	}
-}
-@media (min-resolution: 2.5dppx) {
-	:root {
-		--u: 0.4px;
-	}
-}
-@media (min-resolution: 2.625dppx) {
-	:root {
-		--u: calc(8px / 21);
-	}
-}
-@media (min-resolution: 2.75dppx) {
-	:root {
-		--u: calc(4px / 11);
-	}
-}
-@media (min-resolution: 3dppx) {
-	:root {
-		--u: calc(1px / 3);
-	}
-}
-@media (min-resolution: 3.5dppx) {
-	:root {
-		--u: calc(2px / 7);
-	}
-}
-@media (min-resolution: 4dppx) {
-	:root {
-		--u: 0.25px;
-	}
+	--gutter: 16px;
 }
 
 html {
@@ -92,4 +23,156 @@ body {
 :focus-visible {
 	outline: 3px solid var(--accent);
 	outline-offset: 3px;
+}
+
+/*
+ * Placed in scene pixels: --x, --y, --w and --h on the element, the camera and scale on <html>
+ * (set before paint by the head script). In-room objects carry a position per layout
+ * (--portrait-x …) and take the current layout's. The room never moves: only the view outside
+ * the window shifts with the pointer, and that is drawn on the canvas.
+ */
+:root {
+	/* One scene pixel, and where the world's origin lands on screen, in CSS px. */
+	--sp: calc(var(--s, 2) * 1px);
+	--ox: calc(var(--cam-x, 0) * var(--sp) * -1);
+	--oy: calc(var(--cam-y, 0) * var(--sp) * -1);
+	/* The unit for text on in-room objects: it scales with the scene but stops at the 3× size. */
+	--tu: min(var(--sp), 3px);
+}
+
+:root[data-layout='landscape'] .in-room {
+	--x: var(--landscape-x);
+	--y: var(--landscape-y);
+	--w: var(--landscape-w);
+	--h: var(--landscape-h);
+}
+
+:root[data-layout='portrait'] .in-room {
+	--x: var(--portrait-x);
+	--y: var(--portrait-y);
+	--w: var(--portrait-w);
+	--h: var(--portrait-h);
+}
+
+:root[data-layout='short'] .in-room {
+	--x: var(--short-x);
+	--y: var(--short-y);
+	--w: var(--short-w);
+	--h: var(--short-h);
+}
+
+.in-scene,
+:root[data-layout] .in-room {
+	left: calc(var(--x) * var(--sp) + var(--ox));
+	top: calc(var(--y) * var(--sp) + var(--oy));
+	width: calc(var(--w) * var(--sp));
+	height: calc(var(--h) * var(--sp));
+}
+
+.in-scene {
+	position: absolute;
+}
+
+:root[data-layout] .in-room {
+	position: fixed;
+	z-index: 1;
+}
+
+/*
+ * Without JavaScript the scene is a still (Scene.svelte): the whole world in the desktop layout,
+ * covering the screen and anchored at 50% 75%. Where that shows the sign and the corkboard at a
+ * readable size, their text sits on them as in the scene; on other screens it stacks as cards.
+ */
+@media (min-aspect-ratio: 11/10) and (min-height: 700px) {
+	:root:not([data-layout]) {
+		--sp: max(100vw / 880, 100vh / 480);
+		--ox: calc((100vw - 880 * var(--sp)) / 2);
+		--oy: calc((100vh - 480 * var(--sp)) * 0.75);
+	}
+
+	:root:not([data-layout]) .in-room {
+		--x: var(--landscape-x);
+		--y: var(--landscape-y);
+		--w: var(--landscape-w);
+		--h: var(--landscape-h);
+		position: fixed;
+		z-index: 1;
+		left: calc(var(--x) * var(--sp) + var(--ox));
+		top: calc(var(--y) * var(--sp) + var(--oy));
+		width: calc(var(--w) * var(--sp));
+		height: calc(var(--h) * var(--sp));
+	}
+
+	:root:not([data-layout]) .note {
+		position: absolute;
+		left: calc(var(--nx) * var(--sp));
+		top: calc(var(--ny) * var(--sp));
+		width: calc(var(--nw) * var(--sp));
+		height: calc(var(--nh) * var(--sp));
+	}
+}
+
+@media not all and (min-aspect-ratio: 11/10) and (min-height: 700px) {
+	:root:not([data-layout]) .objects {
+		display: grid;
+		justify-items: center;
+		gap: 1.25rem;
+		padding: 2.5rem var(--gutter);
+	}
+
+	:root:not([data-layout]) :is(.sign, .corkboard) {
+		--tu: 2px;
+		--paper-ink: var(--ink);
+		width: min(100%, 30rem);
+		background: var(--surface);
+		border: 4px solid var(--ink);
+	}
+
+	:root:not([data-layout]) .sign {
+		padding: 1.25rem 1.5rem;
+	}
+
+	:root:not([data-layout]) .corkboard {
+		padding: 1rem;
+	}
+
+	:root:not([data-layout]) .note + .note {
+		margin-top: 0.75rem;
+	}
+}
+
+/* Buttons over the canvas do nothing without JavaScript. */
+:root:not([data-layout]) .in-scene {
+	display: none;
+}
+
+/* The pixel tooltip over in-room buttons (hotspots, radio, clock, swatch card). */
+.scene-tip {
+	position: absolute;
+	bottom: calc(100% + 6px);
+	left: 50%;
+	/* --tip-shift (set by Scene.svelte) keeps the tooltip on screen near an edge. */
+	translate: calc(-50% + var(--tip-shift, 0px)) 0;
+	display: none;
+	padding: 1px 6px 2px;
+	font-family: var(--font-pixel);
+	font-size: 0.8125rem;
+	line-height: 1.2;
+	white-space: nowrap;
+	color: var(--bg);
+	background: var(--ink);
+	box-shadow:
+		2px 0 0 var(--ink),
+		-2px 0 0 var(--ink),
+		0 2px 0 var(--accent);
+	pointer-events: none;
+}
+
+:is(:hover, :focus-visible, .tapped) > .scene-tip {
+	display: block;
+}
+
+/* After a tap, :hover sticks until the next tap elsewhere, so on touch only focus and .tapped show it. */
+:root[data-input='touch'] :hover:not(:focus-visible, .tapped) > .scene-tip {
+	display: none;
 }

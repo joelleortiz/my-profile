@@ -5,20 +5,20 @@
 			"frame": {
 				"x": 0,
 				"y": 0,
-				"w": 19,
-				"h": 14
+				"w": 26,
+				"h": 16
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 19,
-				"h": 14
+				"w": 26,
+				"h": 16
 			},
 			"sourceSize": {
-				"w": 19,
-				"h": 14
+				"w": 26,
+				"h": 16
 			},
 			"duration": 1000
 		}
@@ -29,8 +29,8 @@
 		"image": "sticker-github.png",
 		"format": "I8",
 		"size": {
-			"w": 19,
-			"h": 14
+			"w": 26,
+			"h": 16
 		},
 		"scale": "1",
 		"frameTags": [],
@@ -51,8 +51,8 @@
 						"bounds": {
 							"x": 0,
 							"y": 0,
-							"w": 19,
-							"h": 14
+							"w": 26,
+							"h": 16
 						},
 						"pivot": {
 							"x": 0,
@@ -70,8 +70,8 @@
 						"bounds": {
 							"x": 0,
 							"y": 0,
-							"w": 18,
-							"h": 13
+							"w": 26,
+							"h": 16
 						}
 					}
 				]

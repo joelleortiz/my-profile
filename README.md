@@ -1,54 +1,9 @@
-# sv
+# joelleortiz.me
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Joelle Ortiz's personal site: a pixel-art room where Joelle types at a desk beside the cats Myles and Margot, with the intro and contact links on the sign and corkboard on the wall. SvelteKit, deployed as a Cloudflare Worker.
 
-## Creating a project
+- `npm run dev` starts the dev server.
+- `npm run art` redraws every sprite sheet and the site icons from the pixel data in `scripts/art/`, and refreshes the tables in `ART_SPEC.md`.
+- `node scripts/still/capture.mjs`, with the dev server running, captures the still the page shows without JavaScript and the Open Graph image.
 
-If you're seeing this, you've probably already done this step. Congrats!
-
-```sh
-# create a new project
-npx sv create my-app
-```
-
-To recreate this project with the same configuration:
-
-```sh
-# recreate this project
-npx sv@1.1.1 create --template minimal --types ts --add prettier eslint tailwindcss="plugins:none" sveltekit-adapter="adapter:cloudflare+cfTarget:pages" --install npm site
-```
-
-## Adding features
-
-Add features to your project with `sv add`:
-
-```sh
-npx sv add
-```
-
-For example, to add Tailwind CSS:
-
-```sh
-npx sv add tailwindcss
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```sh
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
+`CLAUDE.md` describes how the code fits together; `ART_SPEC.md` is the guide for redrawing the art.

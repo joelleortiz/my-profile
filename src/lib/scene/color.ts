@@ -25,8 +25,6 @@ export function rgbToHex([r, g, b]: RGB): string {
 	return `#${to(r)}${to(g)}${to(b)}`;
 }
 
-export const rgbKey = (r: number, g: number, b: number) => (r << 16) | (g << 8) | b;
-
 export function rgbToHsl([r, g, b]: RGB): [number, number, number] {
 	r /= 255;
 	g /= 255;
@@ -94,10 +92,6 @@ export function lerpRgb(a: RGB, b: RGB, t: number): RGB {
 	return [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)];
 }
 
-export function lerpHex(a: string, b: string, t: number): string {
-	return rgbToHex(lerpRgb(hexToRgb(a), hexToRgb(b), t));
-}
-
 export function colorDistance(a: RGB, b: RGB): number {
 	const rm = (a[0] + b[0]) / 2;
 	const dr = a[0] - b[0];
@@ -117,18 +111,4 @@ export function nearestIndex(c: RGB, list: RGB[]): number {
 		}
 	}
 	return best;
-}
-
-export function luminance(hex: string): number {
-	const lin = hexToRgb(hex).map((v) => {
-		const c = v / 255;
-		return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
-	});
-	return 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2];
-}
-
-export function contrastRatio(a: string, b: string): number {
-	const la = luminance(a);
-	const lb = luminance(b);
-	return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
 }

@@ -1,12 +1,11 @@
 import { lerpRgb, rgbToHex, type RGB } from './color.ts';
 import { bayer } from './dither.ts';
-import type { SceneLayout } from './layout.ts';
 import type { Lighting, OrbState } from './lighting.ts';
 
 const BAND_DITHER_SHARE = 0.4;
 
 export function renderSkyGradient(
-	sky: SceneLayout['sky'],
+	sky: { top: number; bottom: number; bands: number },
 	lighting: Lighting,
 	w: number,
 	h: number
@@ -46,7 +45,7 @@ function disc(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number) 
 
 export function drawOrb(
 	ctx: CanvasRenderingContext2D,
-	orb: SceneLayout['sky']['orbs'][keyof SceneLayout['sky']['orbs']],
+	orb: { x: number; y: number; r: number; moon?: boolean },
 	state: OrbState,
 	ox: number,
 	oy: number

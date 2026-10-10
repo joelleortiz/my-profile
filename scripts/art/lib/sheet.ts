@@ -44,8 +44,6 @@ export function shift(ink: Ink, steps: number): Ink {
 
 export type Pt = [number, number];
 
-const LIGHT: Pt = [-0.62, -0.78];
-
 export class Pixels {
 	readonly w: number;
 	readonly h: number;
@@ -169,32 +167,6 @@ export class Pixels {
 		return this;
 	}
 
-	blob(
-		x: number,
-		y: number,
-		w: number,
-		h: number,
-		material: Material,
-		{ rim = true, bias = 0, light = LIGHT }: { rim?: boolean; bias?: number; light?: Pt } = {}
-	): this {
-		const rx = w / 2;
-		const ry = h / 2;
-		for (let j = 0; j < h; j++) {
-			for (let i = 0; i < w; i++) {
-				const nx = (i + 0.5 - rx) / rx;
-				const ny = (j + 0.5 - ry) / ry;
-				const d = nx * nx + ny * ny;
-				if (d > 1) continue;
-				const edge = rim && (d > 1 - 2.2 / Math.min(rx, ry) || false);
-				const facing = nx * light[0] + ny * light[1] + bias;
-				let shade: Shade = facing > 0.45 ? 'l' : facing > -0.25 ? 'b' : facing > -0.7 ? 'd' : 'd2';
-				if (edge && rim) shade = facing > 0.3 ? 'd' : 'd2';
-				this.set(x + i, y + j, `${material}.${shade}`);
-			}
-		}
-		return this;
-	}
-
 	map(fn: (ink: Ink | null, x: number, y: number) => Ink | null | undefined, area?: Rect): this {
 		const { x: ax, y: ay, w, h } = area ?? { x: 0, y: 0, w: this.w, h: this.h };
 		for (let y = ay; y < ay + h; y++) {
@@ -270,18 +242,38 @@ const SHEET_MAX_WIDTH = 2048;
 
 export function writeSheet(def: SpriteDef): number {
 	const { name, width: w, height: h } = def;
-	const cols = Math.max(1, Math.min(def.frames.length, Math.floor(SHEET_MAX_WIDTH / w)));
-	const rows = Math.ceil(def.frames.length / cols);
-	const sheet = new Uint8Array(cols * w * rows * h);
-	const sheetW = cols * w;
-
-	const frames = def.frames.map((f, i) => {
+	// Identical frames share one cell, like Aseprite's "merge duplicates" export option.
+	const drawn = def.frames.map((f) => {
 		const p = new Pixels(w, h);
 		f.draw(p);
+		return p;
+	});
+	const cellOf = new Map<string, number>();
+	const cells: Pixels[] = [];
+	const frameCell = drawn.map((p) => {
+		const key = Buffer.from(p.data).toString('base64');
+		let cell = cellOf.get(key);
+		if (cell === undefined) {
+			cell = cells.length;
+			cells.push(p);
+			cellOf.set(key, cell);
+		}
+		return cell;
+	});
+	const cols = Math.max(1, Math.min(cells.length, Math.floor(SHEET_MAX_WIDTH / w)));
+	const rows = Math.ceil(cells.length / cols);
+	const sheet = new Uint8Array(cols * w * rows * h);
+	const sheetW = cols * w;
+	cells.forEach((p, i) => {
 		const fx = (i % cols) * w;
 		const fy = Math.floor(i / cols) * h;
 		for (let y = 0; y < h; y++)
 			sheet.set(p.data.subarray(y * w, y * w + w), (fy + y) * sheetW + fx);
+	});
+
+	const frames = def.frames.map((f, i) => {
+		const fx = (frameCell[i] % cols) * w;
+		const fy = Math.floor(frameCell[i] / cols) * h;
 		return {
 			filename: `${name} ${i}.aseprite`,
 			frame: { x: fx, y: fy, w, h },

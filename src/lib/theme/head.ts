@@ -1,4 +1,6 @@
 import { DEFAULT_PALETTE, PALETTE_KEYS, PALETTES, type UiTokens } from '../scene/palettes.ts';
+import fitViewSource from '../scene/fit-view.js?raw';
+import { GEOMETRY } from '../scene/layout.ts';
 import { TIME_STARTS } from '../scene/time.ts';
 
 export const PALETTE_STORAGE_KEY = 'scene-palette';
@@ -10,19 +12,29 @@ function declarations(tokens: UiTokens): string {
 	return TOKENS.map((t) => `--${t}:${tokens[t]}`).join(';');
 }
 
+/** Ink for text on paper in the room (sign, notes): the light-mode ink whatever the time of day. */
+const paperInk = (key: (typeof PALETTE_KEYS)[number]) =>
+	`--paper-ink:${PALETTES[key].ui.light.ink}`;
+
 export function themeCss(): string {
 	const rules = PALETTE_KEYS.flatMap((key) =>
 		(['light', 'dark'] as const).map(
 			(mode) =>
-				`:root[data-palette="${key}"][data-mode="${mode}"]{${declarations(PALETTES[key].ui[mode])};color-scheme:${mode}}`
+				`:root[data-palette="${key}"][data-mode="${mode}"]{${declarations(PALETTES[key].ui[mode])};${paperInk(key)};color-scheme:${mode}}`
 		)
 	);
 	const fallback = PALETTES[DEFAULT_PALETTE].ui;
 	return [
-		`:root{${declarations(fallback.light)}}`,
+		`:root{${declarations(fallback.light)};${paperInk(DEFAULT_PALETTE)}}`,
 		`@media (prefers-color-scheme:dark){:root:not([data-mode]){${declarations(fallback.dark)};color-scheme:dark}}`,
 		...rules
 	].join('\n');
+}
+
+function layoutScript(): string {
+	const source = fitViewSource.replace(/^export /gm, '');
+	const geometry = JSON.stringify(GEOMETRY);
+	return `(function(){${source}\nvar v=viewportSize();applyView(fitView(v.w,v.h,devicePixelRatio||1,${geometry},v.full),document.documentElement)})();`;
 }
 
 export function bootScript(dev: boolean): string {
@@ -32,5 +44,5 @@ export function bootScript(dev: boolean): string {
 		dev
 			? `var q=new URLSearchParams(location.search);if(q.get('palette'))p=q.get('palette');if(q.get('time'))t=q.get('time');`
 			: ''
-	}if(P.indexOf(p)<0)p='${DEFAULT_PALETTE}';if(T.indexOf(t)<0){var h=new Date().getHours();t=h>=${s.morning}&&h<${s.day}?'morning':h>=${s.day}&&h<${s.dusk}?'day':h>=${s.dusk}&&h<${s.night}?'dusk':'night'}d.dataset.palette=p;d.dataset.time=t;d.dataset.mode=t==='dusk'||t==='night'?'dark':'light'})();`;
+	}if(P.indexOf(p)<0)p='${DEFAULT_PALETTE}';if(T.indexOf(t)<0){var h=new Date().getHours();t=h>=${s.morning}&&h<${s.day}?'morning':h>=${s.day}&&h<${s.dusk}?'day':h>=${s.dusk}&&h<${s.night}?'dusk':'night'}d.dataset.palette=p;d.dataset.time=t;d.dataset.mode=t==='dusk'||t==='night'?'dark':'light'})();${layoutScript()}`;
 }
