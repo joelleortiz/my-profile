@@ -5,20 +5,20 @@
 			"frame": {
 				"x": 0,
 				"y": 0,
-				"w": 16,
-				"h": 12
+				"w": 23,
+				"h": 14
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 16,
-				"h": 12
+				"w": 23,
+				"h": 14
 			},
 			"sourceSize": {
-				"w": 16,
-				"h": 12
+				"w": 23,
+				"h": 14
 			},
 			"duration": 1000
 		}
@@ -29,8 +29,8 @@
 		"image": "sticker-code.png",
 		"format": "I8",
 		"size": {
-			"w": 16,
-			"h": 12
+			"w": 23,
+			"h": 14
 		},
 		"scale": "1",
 		"frameTags": [],
@@ -51,27 +51,12 @@
 						"bounds": {
 							"x": 0,
 							"y": 0,
-							"w": 16,
-							"h": 12
+							"w": 23,
+							"h": 14
 						},
 						"pivot": {
 							"x": 0,
 							"y": 0
-						}
-					}
-				]
-			},
-			{
-				"name": "hit",
-				"color": "#ff0000ff",
-				"keys": [
-					{
-						"frame": 0,
-						"bounds": {
-							"x": 0,
-							"y": 0,
-							"w": 15,
-							"h": 11
 						}
 					}
 				]

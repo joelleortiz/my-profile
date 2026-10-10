@@ -12,8 +12,19 @@ export function preferredFormat(): Format {
 	return document.createElement('audio').canPlayType('audio/ogg; codecs="opus"') ? 'ogg' : 'm4a';
 }
 
+let loopBytes: Promise<ArrayBuffer> | undefined;
+
+/** Downloads the loop without decoding it, since decoding needs an AudioContext and so a gesture. */
+export function preloadLoop(): void {
+	loopBytes ??= download(LOOP, preferredFormat(), 'low');
+	loopBytes.catch(() => {
+		loopBytes = undefined;
+	});
+}
+
 export function loadLoop(context: BaseAudioContext, format: Format): Promise<AudioBuffer> {
-	return loadAudio(context, LOOP, format);
+	loopBytes ??= download(LOOP, format);
+	return loadAudio(context, LOOP, format, loopBytes);
 }
 
 export class SoundBank {
@@ -54,21 +65,22 @@ function sfxIds(): SfxId[] {
 async function loadAudio(
 	context: BaseAudioContext,
 	file: AudioFile,
-	format: Format
+	format: Format,
+	bytes = download(file, format)
 ): Promise<AudioBuffer> {
 	try {
-		return await decode(context, file, format);
+		return await context.decodeAudioData(await bytes);
 	} catch {
-		return decode(context, file, format === 'ogg' ? 'm4a' : 'ogg');
+		return context.decodeAudioData(await download(file, format === 'ogg' ? 'm4a' : 'ogg'));
 	}
 }
 
-async function decode(
-	context: BaseAudioContext,
+async function download(
 	file: AudioFile,
-	format: Format
-): Promise<AudioBuffer> {
-	const response = await fetch(asset(`${file}.${format}`));
+	format: Format,
+	priority: RequestPriority = 'auto'
+): Promise<ArrayBuffer> {
+	const response = await fetch(asset(`${file}.${format}`), { priority });
 	if (!response.ok) throw new Error(`${response.status} ${file}.${format}`);
-	return context.decodeAudioData(await response.arrayBuffer());
+	return response.arrayBuffer();
 }

@@ -3,13 +3,22 @@ import { createQuantizer, ditherPattern } from './dither.ts';
 import {
 	NATIVE_H,
 	NATIVE_W,
+	placeBox,
 	SCENE,
 	type DrawItem,
 	type DrawSprite,
 	type LayerId,
-	type LightDef
+	type LayoutId,
+	type LightDef,
+	type Rect
 } from './layout.ts';
-import { computeLighting, renderLight, type Lighting, type LightImage } from './lighting.ts';
+import {
+	computeLighting,
+	renderLight,
+	type Lighting,
+	type LightImage,
+	type ResolvedLight
+} from './lighting.ts';
 import {
 	ENDESGA32,
 	PALETTES,
@@ -17,6 +26,7 @@ import {
 	type PaletteKey,
 	type SceneTime
 } from './palettes.ts';
+import { paletteRamps } from './materials.ts';
 import { colorTable, recolor, type ColorTransform } from './recolor.ts';
 import { drawOrb, drawStars, renderSkyGradient } from './sky.ts';
 import { anchorAt, parseSheet, Player, sliceAt, type AseSheetJson, type Sheet } from './sprites.ts';
@@ -50,26 +60,36 @@ interface SpriteInstance {
 	loaded: LoadedSheet;
 	player: Player;
 	darkFrame: number | null;
+	/** The sprite whose frame this one shows (forearms drawn in front of the desk, say). */
+	leader: SpriteInstance | null;
 }
 
 export type Pt = [number, number];
 
 export interface HitArea {
-	layer: LayerId;
 	x: number;
 	y: number;
 	w: number;
 	h: number;
 }
 
+export interface ViewPort {
+	layout: LayoutId;
+	w: number;
+	h: number;
+	camX: number;
+	camY: number;
+	cssPxPerScenePx: number;
+}
+
 export interface SceneOptions {
 	frame: HTMLElement;
+	view: ViewPort;
 	palette: PaletteKey;
 	time: SceneTime;
 	reducedMotion: boolean;
 	flags?: string[];
 	onEvent?: (sprite: string, event: string) => void;
-	onOffsets?: (offsets: Record<LayerId, Pt>) => void;
 }
 
 function canvas2d(w: number, h: number, willRead = false) {
@@ -118,7 +138,11 @@ async function loadSheets(names: Set<string>): Promise<Map<string, LoadedSheet>>
 
 export class SceneEngine {
 	readonly canvas: HTMLCanvasElement;
+	private readonly viewCtx: CanvasRenderingContext2D;
+	private readonly worldCanvas: HTMLCanvasElement;
 	private readonly ctx: CanvasRenderingContext2D;
+	private view: ViewPort;
+	private pointerClientX = 0;
 	private readonly far = canvas2d(NATIVE_W, NATIVE_H);
 	private readonly scratch = canvas2d(NATIVE_W, NATIVE_H);
 	private readonly lightMask = canvas2d(NATIVE_W, NATIVE_H);
@@ -127,7 +151,6 @@ export class SceneEngine {
 	private readonly byName = new Map<string, SpriteInstance>();
 	private readonly instances = new Map<DrawItem, SpriteInstance>();
 	private readonly flags: Set<string>;
-	private readonly layerFactor = new Map<LayerId, number>();
 	private readonly nudges = new Map<string, Pt>();
 	private readonly finishes = new Map<SpriteInstance, () => void>();
 	private waits: { at: number; resolve: () => void }[] = [];
@@ -149,9 +172,14 @@ export class SceneEngine {
 	private lightImages = new Map<string, LightImage | null>();
 	private quantize: ((img: ImageData) => void) | null = null;
 
+	/** The clock's hands: a fixed time of day, or null to follow the visitor's clock. */
+	private clockFixed: { hour: number; minute: number } | null = null;
+	private clockKey = '';
+
 	private target = { x: 0, y: 0 };
 	private eased = { x: 0, y: 0 };
-	private offsets = new Map<LayerId, [number, number]>();
+	/** How far the view outside the window has shifted; the room itself never moves. */
+	private outside: Pt = [0, 0];
 	private pointerInside = false;
 	private readonly touchOnly: boolean;
 
@@ -170,15 +198,18 @@ export class SceneEngine {
 	) {
 		this.canvas = canvas;
 		this.options = options;
-		this.ctx = canvas.getContext('2d', { willReadFrequently: true })!;
-		this.ctx.imageSmoothingEnabled = false;
+		this.viewCtx = canvas.getContext('2d', { willReadFrequently: true })!;
+		const world = canvas2d(NATIVE_W, NATIVE_H, true);
+		this.worldCanvas = world.canvas;
+		this.ctx = world.ctx;
+		this.view = options.view;
+		this.resizeView();
 		this.frameEl = options.frame;
 		this.palette = options.palette;
 		this.reducedMotion = options.reducedMotion;
 		this.timeFrom = this.timeTo = options.time;
 		this.touchOnly = matchMedia('(hover: none)').matches;
 		this.flags = new Set(options.flags);
-		for (const layer of SCENE.layers) this.layerFactor.set(layer.id, layer.parallax);
 
 		for (const item of SCENE.draw) {
 			if (!('sprite' in item)) continue;
@@ -189,15 +220,22 @@ export class SceneEngine {
 				item,
 				loaded,
 				player: new Player(loaded.sheet, item.tag),
-				darkFrame: darkTag ? darkTag.from : null
+				darkFrame: darkTag ? darkTag.from : null,
+				leader: null
 			};
 			instance.player.onFrame = (offset) => this.frameStarted(instance, offset);
 			this.sprites.push(instance);
 			this.instances.set(item, instance);
 			if (!this.byName.has(item.sprite)) this.byName.set(item.sprite, instance);
 		}
+		for (const s of this.sprites) {
+			if (!s.item.follow) continue;
+			s.leader = this.byName.get(s.item.follow) ?? null;
+			if (s.leader && s.leader.loaded.sheet.frames.length !== s.loaded.sheet.frames.length)
+				console.warn(`"${s.item.sprite}" follows "${s.item.follow}" but has other frames`);
+		}
 
-		this.updateOffsets();
+		this.updateOutside();
 		this.updateLighting(performance.now());
 		this.listen();
 		this.render();
@@ -275,24 +313,40 @@ export class SceneEngine {
 	hitArea(sprite: string): HitArea | null {
 		const s = this.byName.get(sprite);
 		const hit = s && sliceAt(s.loaded.sheet, 'hit', 0);
-		if (!s?.item.at || !hit) return null;
+		const base = s && this.basePoint(s.item);
+		if (!s || !hit || !base) return null;
 		const [ax, ay] = anchorAt(s.loaded.sheet, 0);
 		return {
-			layer: s.item.layer,
-			x: s.item.at[0] - ax + hit.x,
-			y: s.item.at[1] - ay + hit.y,
+			x: base[0] - ax + hit.x,
+			y: base[1] - ay + hit.y,
 			w: hit.w,
 			h: hit.h
 		};
 	}
 
 	pointerX(): number | null {
-		return this.pointerInside ? ((this.target.x + 1) / 2) * NATIVE_W : null;
+		return this.pointerInside
+			? this.view.camX + this.pointerClientX / this.view.cssPxPerScenePx
+			: null;
+	}
+
+	private resizeView(): void {
+		const { w, h } = this.view;
+		if (this.canvas.width === w && this.canvas.height === h) return;
+		this.canvas.width = w;
+		this.canvas.height = h;
+		this.viewCtx.imageSmoothingEnabled = false;
 	}
 
 	private frameStarted(s: SpriteInstance, offsetInTag: number): void {
 		const events = s.player.tag.events.get(offsetInTag);
 		for (const event of events ?? []) this.options.onEvent?.(s.item.sprite, event);
+	}
+
+	/** Shows a chosen time on the wall clock, or null to follow the visitor's clock. */
+	setClock(fixed: { hour: number; minute: number } | null): void {
+		this.clockFixed = fixed;
+		this.dirty = true;
 	}
 
 	setFlag(flag: string, on: boolean): void {
@@ -302,12 +356,22 @@ export class SceneEngine {
 		this.dirty = true;
 	}
 
+	setView(view: ViewPort): void {
+		if (view.layout !== this.view.layout) {
+			this.skyCanvas = null;
+			this.lightImages.clear();
+		}
+		this.view = view;
+		this.resizeView();
+		this.dirty = true;
+	}
+
 	setReducedMotion(reduced: boolean): void {
 		this.reducedMotion = reduced;
 		if (reduced) {
 			this.eased = { x: 0, y: 0 };
 			this.target = { x: 0, y: 0 };
-			this.updateOffsets();
+			this.updateOutside();
 			for (const resolve of this.finishes.values()) resolve();
 			this.finishes.clear();
 		}
@@ -333,6 +397,7 @@ export class SceneEngine {
 			const r = this.frameEl.getBoundingClientRect();
 			if (r.width === 0) return;
 			this.pointerInside = true;
+			this.pointerClientX = e.clientX - r.left;
 			const clamp = (v: number) => Math.max(-1, Math.min(1, v));
 			this.target.x = clamp((e.clientX - (r.left + r.width / 2)) / (r.width / 2));
 			this.target.y = clamp((e.clientY - (r.top + r.height / 2)) / (r.height / 2));
@@ -379,15 +444,28 @@ export class SceneEngine {
 			const k = 1 - Math.exp(-dt / PARALLAX_EASE_MS);
 			this.eased.x += (this.target.x - this.eased.x) * k;
 			this.eased.y += (this.target.y - this.eased.y) * k;
-			if (this.updateOffsets()) this.dirty = true;
-			for (const s of this.sprites) if (s.player.update(dt)) this.dirty = true;
+			if (this.updateOutside()) this.dirty = true;
+			for (const s of this.sprites) if (!s.leader && s.player.update(dt)) this.dirty = true;
 		}
 
 		if (this.fadeMs && this.updateLighting(now)) this.dirty = true;
+		if (this.clockTicked()) this.dirty = true;
 		if (this.dirty) this.render();
 		this.settleFinishedPlays();
 		this.settleWaits();
 	};
+
+	/** While following the visitor's clock, the second hand moves (the minute hand with reduced motion). */
+	private clockTicked(): boolean {
+		if (this.clockFixed) return false;
+		const d = new Date();
+		const key = this.reducedMotion
+			? `${d.getHours()}:${d.getMinutes()}`
+			: `${d.getMinutes()}:${d.getSeconds()}`;
+		if (key === this.clockKey) return false;
+		this.clockKey = key;
+		return true;
+	}
 
 	private settleFinishedPlays(): void {
 		for (const [s, resolve] of this.finishes) {
@@ -404,23 +482,17 @@ export class SceneEngine {
 		for (const w of due) w.resolve();
 	}
 
-	private updateOffsets(): boolean {
-		let changed = false;
-		for (const [layer, factor] of this.layerFactor) {
-			const x = Math.round(factor * SCENE.parallax.maxOffsetX * this.eased.x) || 0;
-			const y = Math.round(factor * SCENE.parallax.maxOffsetY * this.eased.y) || 0;
-			const prev = this.offsets.get(layer);
-			if (!prev || prev[0] !== x || prev[1] !== y) {
-				this.offsets.set(layer, [x, y]);
-				changed = true;
-			}
-		}
-		if (changed) this.options.onOffsets?.(Object.fromEntries(this.offsets) as Record<LayerId, Pt>);
-		return changed;
+	private updateOutside(): boolean {
+		const x = Math.round(SCENE.parallax.maxOffsetX * this.eased.x) || 0;
+		const y = Math.round(SCENE.parallax.maxOffsetY * this.eased.y) || 0;
+		if (x === this.outside[0] && y === this.outside[1]) return false;
+		this.outside = [x, y];
+		return true;
 	}
 
-	private offset(layer: LayerId): [number, number] {
-		return this.offsets.get(layer) ?? [0, 0];
+	/** Only the far layer, seen through the window, moves with the pointer. */
+	private offset(layer: LayerId): Pt {
+		return layer === 'far' ? this.outside : [0, 0];
 	}
 
 	private mix(now: number): number {
@@ -458,9 +530,24 @@ export class SceneEngine {
 			def.color === 'shaft'
 				? L.shaftColor
 				: hexToRgb(PALETTES[this.palette].base[def.color as BaseMaterial]);
-		const img = renderLight(def, color, L.lights[name] ?? 0);
+		const resolved = this.resolveLight(def);
+		const img = resolved && renderLight(resolved, color, L.lights[name] ?? 0);
 		this.lightImages.set(name, img);
 		return img;
+	}
+
+	/** Light geometry in scene pixels for the current layout; null if its place isn't in it. */
+	private resolveLight(def: LightDef): ResolvedLight | null {
+		if (def.kind === 'glow') return def;
+		const box = def.place ? placeBox(this.view.layout, def.place) : null;
+		if (def.kind === 'pool') return box && { kind: 'pool', box };
+		if (def.place && !box) return null;
+		const [dx, dy] = box ? [box.x, box.y] : [0, 0];
+		return { kind: 'shaft', polygon: def.polygon.map(([x, y]) => [x + dx, y + dy]) };
+	}
+
+	private windowBox(): Rect | null {
+		return placeBox(this.view.layout, 'window');
 	}
 
 	private sheetCanvas(loaded: LoadedSheet, far: boolean): HTMLCanvasElement {
@@ -516,13 +603,25 @@ export class SceneEngine {
 		return [point[0] - ax, point[1] - ay];
 	}
 
+	/** Where an item's anchor sits before parallax: fixed, or a place in the current layout. */
+	private basePoint(item: DrawSprite): Pt | null {
+		if (item.place) {
+			const box = placeBox(this.view.layout, item.place);
+			if (!box) return null;
+			const [dx, dy] = item.offset ?? [0, 0];
+			return [box.x + dx, box.y + dy];
+		}
+		return item.at ?? null;
+	}
+
 	private anchorPoint(s: SpriteInstance): Pt | null {
 		const attached = s.item.attach ? this.slicePoint(...s.item.attach) : null;
 		if (attached) return attached;
-		if (!s.item.at) return null;
+		const base = this.basePoint(s.item);
+		if (!base) return null;
 		const [ox, oy] = this.offset(s.item.layer);
 		const [nx, ny] = this.nudges.get(s.item.sprite) ?? [0, 0];
-		return [s.item.at[0] + ox + nx, s.item.at[1] + oy + ny];
+		return [base[0] + ox + nx, base[1] + oy + ny];
 	}
 
 	private slicePoint(parentName: string, sliceName: string): Pt | null {
@@ -541,40 +640,101 @@ export class SceneEngine {
 		const image = this.sheetCanvas(s.loaded, far);
 		const weights = this.lighting.weights;
 		const alpha = s.item.weight ? weights[s.item.weight] : 1;
-		this.dissolve(target, alpha, (ctx) => this.drawFrame(ctx, s, s.player.frame, image));
-		if (s.darkFrame !== null) {
-			const frame = s.darkFrame;
-			this.dissolve(target, weights.dark * alpha, (ctx) => this.drawFrame(ctx, s, frame, image));
-		}
+		const frame = (s.leader ?? s).player.frame;
+		this.dissolve(target, alpha, (ctx) => this.drawFrame(ctx, s, frame, image));
+		const dark = s.darkFrame;
+		if (dark !== null)
+			this.dissolve(target, weights.dark * alpha, (ctx) => this.drawFrame(ctx, s, dark, image));
 	}
 
-	private drawAgain(name: string, [x, y, w, h]: [number, number, number, number]): void {
-		const s = this.byName.get(name);
-		if (!s) return;
-		this.ctx.save();
-		this.ctx.beginPath();
-		this.ctx.rect(x, y, w, h);
-		this.ctx.clip();
-		this.drawSprite(s);
-		this.ctx.restore();
-	}
-
-	private drawProcedural(kind: 'sky' | 'stars' | 'orb'): void {
+	/** The sky is laid out on the window glass of the current layout; parallax slides it inside. */
+	private drawProcedural(kind: 'sky' | 'stars' | 'orb' | 'clockHands'): void {
+		if (kind === 'clockHands') return this.drawClockHands();
+		const win = this.windowBox();
+		if (!win) return;
 		const ctx = this.far.ctx;
-		const [ox, oy] = this.offset('far');
+		const [ox, oy] = this.outside;
 		const L = this.lighting;
 		const m = SCENE.parallax.maxOffsetY;
+		const at = (u: number, v: number): Pt => [
+			Math.round(win.x + u * win.w),
+			Math.round(win.y + v * win.h)
+		];
 		if (kind === 'sky') {
-			this.skyCanvas ??= renderSkyGradient(SCENE.sky, L, NATIVE_W, NATIVE_H + 2 * m);
+			const bands = { top: win.y, bottom: win.y + win.h, bands: SCENE.sky.bands };
+			this.skyCanvas ??= renderSkyGradient(bands, L, NATIVE_W, NATIVE_H + 2 * m);
 			ctx.drawImage(this.skyCanvas, 0, oy - m);
 		} else if (kind === 'stars') {
 			const night = PALETTES[this.palette].sky.night.orb;
-			drawStars(ctx, SCENE.sky.stars, L.weights.stars, hexToRgb(night), ox, oy);
+			const stars = SCENE.sky.stars.map(([u, v]) => at(u, v));
+			drawStars(ctx, stars, L.weights.stars, hexToRgb(night), ox, oy);
 		} else {
 			for (const orb of L.orbs) {
-				this.dissolve(ctx, orb.weight, (c) => drawOrb(c, SCENE.sky.orbs[orb.time], orb, ox, oy));
+				const def = SCENE.sky.orbs[orb.time];
+				const [x, y] = at(def.u, def.v);
+				this.dissolve(ctx, orb.weight, (c) =>
+					drawOrb(c, { x, y, r: def.r, moon: def.moon }, orb, ox, oy)
+				);
 			}
 		}
+	}
+
+	/** Pixel hands on the wall clock: hour, minute and, while following the real clock, seconds. */
+	private drawClockHands(): void {
+		const box = placeBox(this.view.layout, 'clock');
+		if (!box) return;
+		const [nx, ny] = this.nudges.get('clock') ?? [0, 0];
+		const c = SCENE.clock;
+		const cx = box.x + nx + c.centre[0];
+		const cy = box.y + ny + c.centre[1];
+		const now = new Date();
+		const fixed = this.clockFixed;
+		const hour = fixed ? fixed.hour : now.getHours();
+		const minute = fixed ? fixed.minute : now.getMinutes();
+		const second = fixed || this.reducedMotion ? null : now.getSeconds();
+		const ramps = paletteRamps(this.palette);
+		const tint = this.lighting.tint;
+		const ink = (hex: string) => {
+			const [r, g, b] = hexToRgb(hex);
+			return `rgb(${Math.round(r * tint[0])},${Math.round(g * tint[1])},${Math.round(b * tint[2])})`;
+		};
+		const hand = (turns: number, length: number, color: string) => {
+			const a = turns * Math.PI * 2;
+			const x1 = Math.round(cx + Math.sin(a) * length);
+			const y1 = Math.round(cy - Math.cos(a) * length);
+			this.ctx.fillStyle = color;
+			let [x, y] = [cx, cy];
+			const dx = Math.abs(x1 - x);
+			const dy = -Math.abs(y1 - y);
+			const sx = x < x1 ? 1 : -1;
+			const sy = y < y1 ? 1 : -1;
+			let err = dx + dy;
+			for (;;) {
+				this.ctx.fillRect(x, y, 1, 1);
+				if (x === x1 && y === y1) break;
+				const e2 = 2 * err;
+				if (e2 >= dy) {
+					err += dy;
+					x += sx;
+				}
+				if (e2 <= dx) {
+					err += dx;
+					y += sy;
+				}
+			}
+		};
+		const dark = ink(ramps.hair.b);
+		hand(((hour % 12) + minute / 60) / 12, c.hour, dark);
+		hand(minute / 60, c.minute, dark);
+		if (second !== null) hand(second / 60, c.second, ink(ramps.sticker0.b));
+		this.ctx.fillStyle = ink(ramps.sticker0.d);
+		this.ctx.fillRect(cx, cy, 1, 1);
+	}
+
+	/** Clears a place's box from the room so only the sky shows there. */
+	private cut(place: string): void {
+		const box = placeBox(this.view.layout, place);
+		if (box) this.ctx.clearRect(box.x, box.y, box.w, box.h);
 	}
 
 	private applyLight(name: string): void {
@@ -582,15 +742,13 @@ export class SceneEngine {
 		if (!def) return;
 		const img = this.lightImage(name, def);
 		if (!img) return;
-		const [ox, oy] = this.offset(def.layer);
-		const x = img.x + ox;
-		const y = img.y + oy;
+		const { x, y } = img;
 		const { canvas, ctx } = this.lightMask;
 		// Masking by what is drawn so far keeps light off the transparent window panes (the sky).
 		ctx.clearRect(x, y, img.w, img.h);
 		ctx.drawImage(img.canvas, x, y);
 		ctx.globalCompositeOperation = 'destination-in';
-		ctx.drawImage(this.canvas, x, y, img.w, img.h, x, y, img.w, img.h);
+		ctx.drawImage(this.worldCanvas, x, y, img.w, img.h, x, y, img.w, img.h);
 		ctx.globalCompositeOperation = 'source-over';
 		this.ctx.globalCompositeOperation = 'screen';
 		this.ctx.drawImage(canvas, x, y, img.w, img.h, x, y, img.w, img.h);
@@ -602,7 +760,35 @@ export class SceneEngine {
 		this.clearCanvases();
 		for (const item of SCENE.draw as DrawItem[]) this.drawItem(item);
 		this.drawFarBehindRoom();
+		this.present();
 		this.quantizeFrame();
+	}
+
+	/** Copies the world through the camera; past the world's edges, its edge pixels repeat. */
+	private present(): void {
+		const ctx = this.viewCtx;
+		const { width: vw, height: vh } = this.canvas;
+		const x0 = -this.view.camX;
+		const y0 = -this.view.camY;
+		const right = x0 + NATIVE_W;
+		const bottom = y0 + NATIVE_H;
+		ctx.drawImage(this.worldCanvas, x0, y0);
+		if (x0 > 0) ctx.drawImage(this.worldCanvas, 0, 0, 1, NATIVE_H, 0, y0, x0, NATIVE_H);
+		if (right < vw) {
+			ctx.drawImage(
+				this.worldCanvas,
+				NATIVE_W - 1,
+				0,
+				1,
+				NATIVE_H,
+				right,
+				y0,
+				vw - right,
+				NATIVE_H
+			);
+		}
+		if (y0 > 0) ctx.drawImage(this.canvas, 0, y0, vw, 1, 0, 0, vw, y0);
+		if (bottom < vh) ctx.drawImage(this.canvas, 0, bottom - 1, vw, 1, 0, bottom, vw, vh - bottom);
 	}
 
 	private clearCanvases(): void {
@@ -614,22 +800,35 @@ export class SceneEngine {
 	private drawItem(item: DrawItem): void {
 		if ('procedural' in item) return this.drawProcedural(item.procedural);
 		if ('light' in item) return this.applyLight(item.light);
-		if ('again' in item) return this.drawAgain(item.again, item.clip);
+		if ('cut' in item) return this.cut(item.cut);
 		const s = this.instances.get(item);
-		if (s && (!item.requires || this.flags.has(item.requires))) this.drawSprite(s);
+		if (s && this.required(item.requires)) this.drawSprite(s);
 	}
 
+	private required(flag: string | undefined): boolean {
+		if (!flag) return true;
+		return flag.startsWith('!') ? !this.flags.has(flag.slice(1)) : this.flags.has(flag);
+	}
+
+	/** The sky goes behind the room, but only through the window glass. */
 	private drawFarBehindRoom(): void {
+		const win = this.windowBox();
+		if (!win) return;
+		this.ctx.save();
+		this.ctx.beginPath();
+		this.ctx.rect(win.x, win.y, win.w, win.h);
+		this.ctx.clip();
 		this.ctx.globalCompositeOperation = 'destination-over';
 		this.ctx.drawImage(this.far.canvas, 0, 0);
-		this.ctx.globalCompositeOperation = 'source-over';
+		this.ctx.restore();
 	}
 
 	private quantizeFrame(): void {
 		if (!this.quantize) return;
-		const img = this.ctx.getImageData(0, 0, NATIVE_W, NATIVE_H);
+		const { width, height } = this.canvas;
+		const img = this.viewCtx.getImageData(0, 0, width, height);
 		this.quantize(img);
-		this.ctx.putImageData(img, 0, 0);
+		this.viewCtx.putImageData(img, 0, 0);
 	}
 }
 

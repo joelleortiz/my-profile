@@ -25,7 +25,6 @@ def main() -> None:
         'sleepy-chirp': [finish_one_shot(sleepy_chirp(rng, pitch, length))
                          for pitch, length in ((1.0, 0.6), (0.95, 0.7), (1.06, 0.5))],
         'stretch-yawn': [finish_one_shot(stretch_yawn(rng))],
-        'meow-soft': [finish_one_shot(meow_soft(pitch)) for pitch in (1.0, 1.08)],
     }
     for sound_id, variations in sounds.items():
         print_measurements(write_sound(sound_id, variations))
@@ -101,21 +100,6 @@ def stretch_yawn(rng: np.random.Generator, length: float = 1.3) -> np.ndarray:
     squeak_freq = glide(t, [(0, 1300), (1.05, 1300), (1.17, 1650), (length, 1650)])
     squeak = pulse_wave(squeak_freq, duty=0.3) * window(t, 1.05, 1.17) * 0.35
     return lofi.lowpass(yawn + squeak, 4000)
-
-
-def meow_soft(pitch: float, length: float = 0.5) -> np.ndarray:
-    t = time_axis(length)
-    vibrato = 1 + 0.015 * np.sin(TAU * 6 * t)
-    freq = glide(t, [(0, 620), (0.18, 900), (length, 700)]) * pitch * vibrato
-    voice = pulse_wave(freq, duty=0.35)
-    bright = lofi.peaking(voice, 2400, 8, q=1.5)
-    open_ = lofi.peaking(voice, 1100, 8, q=1.2)
-    round_ = lofi.lowpass(voice, 1200)
-    i_to_a = envelope(t, [(0, 0), (0.15, 1), (length, 1)])
-    a_to_u = envelope(t, [(0, 0), (0.25, 0), (length, 1)])
-    vowel = bright * (1 - i_to_a) + (open_ * (1 - a_to_u) + round_ * a_to_u) * i_to_a
-    loudness = envelope(t, [(0, 0), (0.03, 1), (length - 0.12, 0.8), (length, 0)])
-    return lofi.lowpass(vowel * loudness, 4500)
 
 
 def ice_rattle(rng: np.random.Generator, t: np.ndarray, start: float, end: float, count: int = 7) -> np.ndarray:

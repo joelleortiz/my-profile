@@ -30,7 +30,7 @@ AAC_FRAME = 1024  # aac_at records the encoder delay but not the end padding, so
 SILENCE_DB = -50.0
 
 LOOPS = {'purr'}
-SOUND_IDS = ('sticker', 'cup-down', 'sip', 'purr', 'pet-trill', 'sleepy-chirp', 'stretch-yawn', 'meow-soft')
+SOUND_IDS = ('sticker', 'cup-down', 'sip', 'purr', 'pet-trill', 'sleepy-chirp', 'stretch-yawn')
 
 CODECS = {
     'ogg': ['-c:a', 'libopus', '-b:a', '64k', '-vbr', 'on', '-compression_level', '10', '-application', 'audio'],

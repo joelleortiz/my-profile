@@ -5,20 +5,20 @@
 			"frame": {
 				"x": 0,
 				"y": 0,
-				"w": 276,
-				"h": 52
+				"w": 316,
+				"h": 145
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 276,
-				"h": 52
+				"w": 316,
+				"h": 145
 			},
 			"sourceSize": {
-				"w": 276,
-				"h": 52
+				"w": 316,
+				"h": 145
 			},
 			"duration": 1000
 		}
@@ -29,8 +29,8 @@
 		"image": "desk.png",
 		"format": "I8",
 		"size": {
-			"w": 276,
-			"h": 52
+			"w": 316,
+			"h": 145
 		},
 		"scale": "1",
 		"frameTags": [],
@@ -51,8 +51,8 @@
 						"bounds": {
 							"x": 0,
 							"y": 0,
-							"w": 276,
-							"h": 52
+							"w": 316,
+							"h": 145
 						},
 						"pivot": {
 							"x": 0,

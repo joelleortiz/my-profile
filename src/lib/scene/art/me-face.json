@@ -5,130 +5,108 @@
 			"frame": {
 				"x": 0,
 				"y": 0,
-				"w": 32,
-				"h": 32
+				"w": 54,
+				"h": 62
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 32,
-				"h": 32
+				"w": 54,
+				"h": 62
 			},
 			"sourceSize": {
-				"w": 32,
-				"h": 32
+				"w": 54,
+				"h": 62
 			},
 			"duration": 50
 		},
 		{
 			"filename": "me-face 1.aseprite",
 			"frame": {
-				"x": 32,
+				"x": 54,
 				"y": 0,
-				"w": 32,
-				"h": 32
+				"w": 54,
+				"h": 62
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 32,
-				"h": 32
+				"w": 54,
+				"h": 62
 			},
 			"sourceSize": {
-				"w": 32,
-				"h": 32
+				"w": 54,
+				"h": 62
 			},
 			"duration": 90
 		},
 		{
 			"filename": "me-face 2.aseprite",
 			"frame": {
-				"x": 64,
+				"x": 0,
 				"y": 0,
-				"w": 32,
-				"h": 32
+				"w": 54,
+				"h": 62
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 32,
-				"h": 32
+				"w": 54,
+				"h": 62
 			},
 			"sourceSize": {
-				"w": 32,
-				"h": 32
+				"w": 54,
+				"h": 62
 			},
 			"duration": 50
 		},
 		{
 			"filename": "me-face 3.aseprite",
 			"frame": {
-				"x": 96,
+				"x": 108,
 				"y": 0,
-				"w": 32,
-				"h": 32
+				"w": 54,
+				"h": 62
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 32,
-				"h": 32
+				"w": 54,
+				"h": 62
 			},
 			"sourceSize": {
-				"w": 32,
-				"h": 32
+				"w": 54,
+				"h": 62
 			},
 			"duration": 1000
 		},
 		{
 			"filename": "me-face 4.aseprite",
 			"frame": {
-				"x": 128,
+				"x": 162,
 				"y": 0,
-				"w": 32,
-				"h": 32
+				"w": 54,
+				"h": 62
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 32,
-				"h": 32
+				"w": 54,
+				"h": 62
 			},
 			"sourceSize": {
-				"w": 32,
-				"h": 32
-			},
-			"duration": 1000
-		},
-		{
-			"filename": "me-face 5.aseprite",
-			"frame": {
-				"x": 160,
-				"y": 0,
-				"w": 32,
-				"h": 32
-			},
-			"rotated": false,
-			"trimmed": false,
-			"spriteSourceSize": {
-				"x": 0,
-				"y": 0,
-				"w": 32,
-				"h": 32
-			},
-			"sourceSize": {
-				"w": 32,
-				"h": 32
+				"w": 54,
+				"h": 62
 			},
 			"duration": 1000
 		}
@@ -139,8 +117,8 @@
 		"image": "me-face.png",
 		"format": "I8",
 		"size": {
-			"w": 192,
-			"h": 32
+			"w": 216,
+			"h": 62
 		},
 		"scale": "1",
 		"frameTags": [
@@ -152,23 +130,16 @@
 				"color": "#000000ff"
 			},
 			{
-				"name": "happy",
+				"name": "glint",
 				"from": 3,
 				"to": 3,
 				"direction": "forward",
 				"color": "#000000ff"
 			},
 			{
-				"name": "glint",
+				"name": "none",
 				"from": 4,
 				"to": 4,
-				"direction": "forward",
-				"color": "#000000ff"
-			},
-			{
-				"name": "none",
-				"from": 5,
-				"to": 5,
 				"direction": "forward",
 				"color": "#000000ff"
 			}
@@ -190,8 +161,8 @@
 						"bounds": {
 							"x": 0,
 							"y": 0,
-							"w": 32,
-							"h": 32
+							"w": 54,
+							"h": 62
 						},
 						"pivot": {
 							"x": 0,

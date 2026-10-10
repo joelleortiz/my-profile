@@ -5,20 +5,20 @@
 			"frame": {
 				"x": 0,
 				"y": 0,
-				"w": 62,
-				"h": 72
+				"w": 83,
+				"h": 106
 			},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {
 				"x": 0,
 				"y": 0,
-				"w": 62,
-				"h": 72
+				"w": 83,
+				"h": 106
 			},
 			"sourceSize": {
-				"w": 62,
-				"h": 72
+				"w": 83,
+				"h": 106
 			},
 			"duration": 1000
 		}
@@ -29,8 +29,8 @@
 		"image": "chair.png",
 		"format": "I8",
 		"size": {
-			"w": 62,
-			"h": 72
+			"w": 83,
+			"h": 106
 		},
 		"scale": "1",
 		"frameTags": [],
@@ -51,8 +51,8 @@
 						"bounds": {
 							"x": 0,
 							"y": 0,
-							"w": 62,
-							"h": 72
+							"w": 83,
+							"h": 106
 						},
 						"pivot": {
 							"x": 0,

@@ -2,17 +2,17 @@
 
 The sound for joelleortiz.me: an original 48-bar lo-fi loop (written as MIDI by a script, rendered with FluidSynth, given a lo-fi treatment in Python and mastered into a seamless 128-second loop), the scene's sound effects, and the audio module that plays them.
 
-| Path                                     | What it is                                                                         |
-| ---------------------------------------- | ---------------------------------------------------------------------------------- |
-| `music/lofi-loop.mid`                    | The composition: Type 1, 480 PPQ, one track per instrument, ends on the loop point |
-| `music/previews/*.mp3`                   | Review renders of the variations (not committed). The site uses C2                 |
-| `static/audio/lofi-loop.{ogg,m4a}`       | The loop the site plays: Opus and AAC, each exactly 6,144,000 samples at 48 kHz    |
-| `static/audio/sfx/<sound>-<n>.{ogg,m4a}` | Sound effects, one pair per variation                                              |
-| `static/audio/CREDITS.md`                | Where every sound came from                                                        |
-| `src/lib/audio/`                         | The audio module the site imports (`index.ts`)                                     |
-| `src/routes/dev/audio/`                  | The `/dev/audio` sound board, available only under `npm run dev`                   |
-| `scripts/music/`                         | The scripts below                                                                  |
-| `music/work/`                            | Ignored by git: the SoundFont, WAV stems and masters. Safe to delete               |
+| Path                                     | What it is                                                                                   |
+| ---------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `music/lofi-loop.mid`                    | The composition: Type 1, 480 PPQ, one track per instrument, ends on the loop point           |
+| `music/previews/`                        | Review renders (not committed): loop MP3s from `render.py --preview` and the typing previews |
+| `static/audio/lofi-loop.{ogg,m4a}`       | The loop the site plays: Opus and AAC, each exactly 6,144,000 samples at 48 kHz              |
+| `static/audio/sfx/<sound>-<n>.{ogg,m4a}` | Sound effects, one pair per variation                                                        |
+| `static/audio/CREDITS.md`                | Where every sound came from                                                                  |
+| `src/lib/audio/`                         | The audio module the site imports (`index.ts`)                                               |
+| `src/routes/dev/audio/`                  | The `/dev/audio` sound board, available only under `npm run dev`                             |
+| `scripts/music/`                         | The scripts below                                                                            |
+| `music/work/`                            | Ignored by git: the SoundFont, WAV stems and masters. Safe to delete                         |
 
 ## Set up
 
@@ -29,10 +29,10 @@ The first render downloads the SoundFont into `music/work/soundfonts/`.
 ```sh
 py=scripts/music/.venv/bin/python
 
-$py scripts/music/compose.py                         # music/lofi-loop.mid (preview C2)
+$py scripts/music/compose.py                         # music/lofi-loop.mid
 $py scripts/music/render.py --export static/audio    # master in music/work/main, then the .ogg and .m4a
 $py scripts/music/check_loop.py static/audio/lofi-loop.ogg static/audio/lofi-loop.m4a
-$py scripts/music/previews.py C2                     # preview MP3s, by name or all of them
+$py scripts/music/render.py --preview music/previews/loop.mp3   # optional: an MP3 with crackle, for listening
 ```
 
 A render takes about 20 seconds and about 4 GB of memory. The export measures each file and re-limits it if lossy encoding pushes the true peak above −1.5 dBTP.
@@ -49,22 +49,35 @@ If a browser ever clicks at the loop point, `render.py --wrap-ms 100` encodes th
 
 ## Sound effects
 
-| Sound         | Plays on                                         | Variations         | Made by                                     |
-| ------------- | ------------------------------------------------ | ------------------ | ------------------------------------------- |
-| key tap       | `type`                                           | 8                  | Synthesised live (`src/lib/audio/synth.ts`) |
-| blip on / off | sound on and `palette-change` / sound off        | 1 each             | Synthesised live (`src/lib/audio/synth.ts`) |
-| sticker       | `sticker-hover` (14 dB quieter), `sticker-click` | 2                  | `sfx.py`                                    |
-| cup-down      | `cup-down`                                       | 2                  | `sfx.py`                                    |
-| sip           | `sip`                                            | 3                  | `sfx.py`                                    |
-| purr          | starts on `pet-start`, fades out on `pet-end`    | 1, a seamless loop | `sfx.py`, placeholder                       |
-| pet-trill     | `pet-start`                                      | 3                  | `sfx.py`, placeholder                       |
-| sleepy-chirp  | `margot-wake`                                    | 3                  | `sfx.py`, placeholder                       |
-| stretch-yawn  | `margot-stretch`                                 | 1                  | `sfx.py`, placeholder                       |
-| meow-soft     | `palette-open`                                   | 2                  | `sfx.py`, placeholder                       |
+| Sound         | Plays on                                      | Variations                  | Made by                                      |
+| ------------- | --------------------------------------------- | --------------------------- | -------------------------------------------- |
+| keyboard      | `type`                                        | 16 keys, 5 spaces, 3 enters | Synthesised live (`src/lib/audio/typing.ts`) |
+| blip on / off | sound on and `palette-change` / sound off     | 1 each                      | Synthesised live (`src/lib/audio/synth.ts`)  |
+| sticker       | `sticker-hover`, `sticker-click`              | 2                           | `sfx.py`                                     |
+| cup-down      | `cup-down`                                    | 2                           | `sfx.py`                                     |
+| sip           | `sip`                                         | 3                           | `sfx.py`                                     |
+| purr          | starts on `pet-start`, fades out on `pet-end` | 1, a seamless loop          | `sfx.py`, placeholder                        |
+| pet-trill     | `pet-start`                                   | 3                           | `sfx.py`, placeholder                        |
+| sleepy-chirp  | `margot-wake`                                 | 3                           | `sfx.py`, placeholder                        |
+| stretch-yawn  | `margot-stretch`                              | 1                           | `sfx.py`, placeholder                        |
 
 Files are `static/audio/sfx/<sound>-<n>.ogg` and `.m4a`, numbered from 1. They are mono, 48 kHz, with 8 ms fades and a true peak of −3 dBTP or lower. One-shots are normalised to −20 LUFS (the loudest 400 ms); very transient ones (sticker, cup-down) reach their peak limit first and sit a few dB lower. The purr is −26 LUFS. Each length is a whole number of 1,024-sample AAC frames, so both formats decode to exactly the same length. The site picks one variation at random each time, with ±3% pitch and ±2 dB.
 
 `scripts/music/sfx.py` regenerates the synthesised set and `src/lib/audio/sfx-manifest.ts`, the list of files the module loads.
+
+## Typing
+
+Each `type` event plays one stroke of a tactile mechanical keyboard with a hard case: a crisp "tak" downstroke and a quieter upstroke, sometimes with a small second hit. `src/lib/audio/typing.ts` synthesises each impact as a noise burst (a 0.6 ms attack, a sub-millisecond snap and a short tail), coloured by peaking filters (2.45 kHz, 1.4 kHz and a gentle dip at 6.4 kHz) fitted to the third-octave spectrum of a CC0 recording of an ikki68 Aurora with WS Brown switches (see `static/audio/CREDITS.md`), plus a small thump of the case on the desk.
+
+A word model (`Typist`) turns every 3 to 9 strokes into a heavier, longer space (lower, with a longer tail and a stabiliser double hit), and every 6 to 12 words into an Enter. Each stroke comes from a pool of variations, then plays with the usual ±3% pitch and ±2 dB, up to 15 ms late so the scene's even 220 ms rhythm never sounds machine-gunned. Pools render on first use, about 5 ms each.
+
+To render previews:
+
+```sh
+$py scripts/music/typing_previews.py
+```
+
+It writes `music/previews/typing-tactile-crisp-{solo,mix}.m4a`: 10 seconds of typing at the scene's rhythm (read from the `type` tag in `me.json`), alone and over bar 9 of the loop with the crackle at the site's levels, and prints how far under the music it sits. `scripts/music/typing-track.ts` renders the typing for it with Node, importing `typing.ts` and `levels.ts` directly, so those two import with `.ts` and use only erasable syntax.
 
 ## Replace a sound
 
@@ -81,9 +94,17 @@ Files are `static/audio/sfx/<sound>-<n>.ogg` and `.m4a`, numbered from 1. They a
 3. Update the sound's row in `static/audio/CREDITS.md`.
 4. Run `npm run check` (it checks that every file in the manifest exists), then listen on the sound board.
 
+## Levels
+
+Every playback level is in `src/lib/audio/levels.ts`, in dB. The music and the crackle play at their own level; each effect plays at the SFX bus plus its group's level (`typing`, `blips`, `stickerHover`, `stickerClick`, `foley`, `cats`, `purr`).
+
+At the defaults, measured against the music at the master (−25 LUFS): one key stroke sits about 31 dB under it (typing at the scene's 4.5 strokes a second, 26 dB), one-shots 12 to 15 dB under, the purr 18 dB and a sticker hover 20 to 23 dB under. The typing measures far under the music because its 1 to 5 kHz "tak" lands where the lo-fi loop is nearly empty: there its strokes peak only a few dB above the music, which keeps them texture rather than on top.
+
 ## Test on the sound board
 
-`npm run dev`, then open `/dev/audio`. It has the sound toggle, a button per scene event, a 3-second typing burst, the time-of-day selector with the crossfade length, and a live level and status readout.
+`npm run dev`, then open `/dev/audio`. It has the sound toggle, a button per scene event, a 3-second typing burst and typing at the scene's rate, the time-of-day selector with the crossfade length, level sliders, and a live level and status readout.
+
+The sliders change the SFX bus and each group's level while sounds play. They show the value in dB and the default, and the box under them holds the current numbers in the form `levels.ts` uses, ready to paste or send. Reset to defaults puts them back. Slider changes last until the page reloads; to keep them, copy the numbers into `levels.ts`.
 
 ## How the loop stays seamless
 

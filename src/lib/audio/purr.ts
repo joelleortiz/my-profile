@@ -1,5 +1,6 @@
 const ATTACK_SECONDS = 0.4;
 const RELEASE_SECONDS = 0.8;
+const LEVEL_CHANGE_SECONDS = 0.1;
 
 interface Voice {
 	source: AudioBufferSourceNode;
@@ -20,14 +21,18 @@ export class PurrLoop {
 		return this.voice !== undefined;
 	}
 
-	start(buffer: AudioBuffer | undefined): void {
+	start(buffer: AudioBuffer | undefined, gain: number): void {
 		if (this.voice || !buffer) return;
 		const source = new AudioBufferSourceNode(this.context, { buffer, loop: true });
 		const level = new GainNode(this.context, { gain: 0 });
 		source.connect(level).connect(this.destination);
 		source.start();
-		this.ramp(level, 1, ATTACK_SECONDS);
+		this.ramp(level, gain, ATTACK_SECONDS);
 		this.voice = { source, level };
+	}
+
+	setGain(gain: number): void {
+		if (this.voice) this.ramp(this.voice.level, gain, LEVEL_CHANGE_SECONDS);
 	}
 
 	stop(releaseSeconds = RELEASE_SECONDS): void {

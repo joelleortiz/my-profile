@@ -72,8 +72,10 @@ function placements(scene: SceneLayout, name: string): string {
 		.map((d) => {
 			if (!('sprite' in d)) return '';
 			const where = d.attach
-				? `on \`${d.attach[0]}\` slice \`${d.attach[1]}\`${d.at ? `, else ${d.at.join(', ')}` : ''}`
-				: d.at?.join(', ');
+				? `on \`${d.attach[0]}\` slice \`${d.attach[1]}\``
+				: d.place
+					? `place \`${d.place}\`${d.offset ? ` + ${d.offset.join(', ')}` : ''}`
+					: d.at?.join(', ');
 			const notes = [
 				d.tag ? `tag \`${d.tag}\`` : '',
 				d.dark ? `\`${d.dark}\` after dark` : '',
@@ -95,7 +97,7 @@ function spriteTable(): string {
 		return `| \`${name}\` | ${size.w}×${size.h} | ${anchorOf(json)} | ${frameList(json).length} | ${tagsOf(json)} | ${slicesOf(json)} | ${placements(scene, name)} |`;
 	});
 	return [
-		'| Sprite | Frame | Anchor | Frames | Tags (frames: durations) | Slices (x, y, w×h) | Placement (layer: scene x, y) |',
+		'| Sprite | Frame | Anchor | Frames | Tags (frames: durations) | Slices (x, y, w×h) | Placement (layer: scene x, y, or a place in each layout) |',
 		'|---|---|---|---|---|---|---|',
 		...rows
 	].join('\n');

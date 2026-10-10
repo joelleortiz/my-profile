@@ -1,6 +1,6 @@
 import { hexToRgb, lerp, lerpRgb, type RGB } from './color.ts';
 import { bayer } from './dither.ts';
-import type { GlowLight, LightDef, ShaftLight, WeightName } from './layout.ts';
+import type { Rect, WeightName } from './layout.ts';
 import { PALETTES, type PaletteKey, type SceneTime } from './palettes.ts';
 
 interface TimeLight {
@@ -11,22 +11,22 @@ interface TimeLight {
 
 export const TIME_LIGHT: Record<SceneTime, TimeLight> = {
 	morning: {
-		lights: { shaft: 0.24, lamp: 0, screen: 0 },
+		lights: { shaft: 0.24, lamp: 0, screen: 0, signPool: 0, corkPool: 0 },
 		haze: 0.45,
 		weights: { day: 1, dark: 0, night: 0, stars: 0 }
 	},
 	day: {
-		lights: { shaft: 0.16, lamp: 0, screen: 0 },
+		lights: { shaft: 0.16, lamp: 0, screen: 0, signPool: 0, corkPool: 0 },
 		haze: 0.45,
 		weights: { day: 1, dark: 0, night: 0, stars: 0 }
 	},
 	dusk: {
-		lights: { shaft: 0.2, lamp: 0.34, screen: 0.22 },
+		lights: { shaft: 0.2, lamp: 0.32, screen: 0.14, signPool: 0.4, corkPool: 0.4 },
 		haze: 0.25,
 		weights: { day: 0, dark: 1, night: 0, stars: 0.3 }
 	},
 	night: {
-		lights: { shaft: 0, lamp: 0.55, screen: 0.45 },
+		lights: { shaft: 0, lamp: 0.5, screen: 0.26, signPool: 0.62, corkPool: 0.62 },
 		haze: 0.08,
 		weights: { day: 0, dark: 1, night: 1, stars: 1 }
 	}
@@ -112,6 +112,12 @@ export function computeLighting(
 	};
 }
 
+/** A light with its geometry resolved for the current layout, in scene pixels. */
+export type ResolvedLight =
+	| { kind: 'glow'; x: number; y: number; rx: number; ry: number; clip?: Rect }
+	| { kind: 'shaft'; polygon: [number, number][] }
+	| { kind: 'pool'; box: Rect };
+
 export interface LightImage {
 	canvas: HTMLCanvasElement;
 	x: number;
@@ -124,15 +130,37 @@ function quantize(f: number, x: number, y: number): number {
 	return Math.min(GLOW_LEVELS, Math.floor(f * GLOW_LEVELS + bayer(x, y))) / GLOW_LEVELS;
 }
 
-function glowLevels(def: GlowLight, x: number, y: number): number {
-	const dx = (x + 0.5 - def.x) / def.rx;
-	const dy = (y + 0.5 - def.y) / def.ry;
-	const f = 1 - Math.sqrt(dx * dx + dy * dy);
+function ellipseFalloff(
+	x: number,
+	y: number,
+	cx: number,
+	cy: number,
+	rx: number,
+	ry: number
+): number {
+	const dx = (x + 0.5 - cx) / rx;
+	const dy = (y + 0.5 - cy) / ry;
+	return 1 - Math.sqrt(dx * dx + dy * dy);
+}
+
+const inside = (r: Rect, x: number, y: number) =>
+	x >= r.x && y >= r.y && x < r.x + r.w && y < r.y + r.h;
+
+function glowLevels(def: Extract<ResolvedLight, { kind: 'glow' }>, x: number, y: number): number {
+	if (def.clip && !inside(def.clip, x, y)) return 0;
+	const f = ellipseFalloff(x, y, def.x, def.y, def.rx, def.ry);
 	return f > 0 ? quantize(f ** 1.4, x, y) : 0;
 }
 
-function shaftLevels(def: ShaftLight, x: number, y: number): number {
-	const [tl, tr, br, bl] = def.polygon;
+/** Fully lit inside, with a short dithered edge, so text on the lit surface stays even. */
+function poolLevels(box: Rect, x: number, y: number): number {
+	if (!inside(box, x, y)) return 0;
+	const f = ellipseFalloff(x, y, box.x + box.w / 2, box.y + box.h / 2, box.w * 0.75, box.h * 0.8);
+	return f > 0 ? quantize(Math.min(1, f * 4), x, y) : 0;
+}
+
+function shaftLevels(polygon: [number, number][], x: number, y: number): number {
+	const [tl, tr, br, bl] = polygon;
 	const top = Math.min(tl[1], tr[1]);
 	const bottom = Math.max(bl[1], br[1]);
 	if (y < top || y >= bottom) return 0;
@@ -145,24 +173,35 @@ function shaftLevels(def: ShaftLight, x: number, y: number): number {
 	return quantize((1 - 0.6 * t) * edge, x, y);
 }
 
-export function renderLight(def: LightDef, color: RGB, strength: number): LightImage | null {
-	if (strength <= 0.004) return null;
-	let x0: number, y0: number, x1: number, y1: number;
+function bounds(def: ResolvedLight): Rect {
 	if (def.kind === 'glow') {
-		x0 = Math.floor(def.x - def.rx);
-		y0 = Math.floor(def.y - def.ry);
-		x1 = Math.ceil(def.x + def.rx);
-		y1 = Math.ceil(def.y + def.ry);
-	} else {
-		const xs = def.polygon.map((p) => p[0]);
-		const ys = def.polygon.map((p) => p[1]);
-		x0 = Math.floor(Math.min(...xs));
-		y0 = Math.floor(Math.min(...ys));
-		x1 = Math.ceil(Math.max(...xs));
-		y1 = Math.ceil(Math.max(...ys));
+		const r = {
+			x: Math.floor(def.x - def.rx),
+			y: Math.floor(def.y - def.ry),
+			w: Math.ceil(def.rx * 2) + 1,
+			h: Math.ceil(def.ry * 2) + 1
+		};
+		if (!def.clip) return r;
+		const x = Math.max(r.x, def.clip.x);
+		const y = Math.max(r.y, def.clip.y);
+		return {
+			x,
+			y,
+			w: Math.max(1, Math.min(r.x + r.w, def.clip.x + def.clip.w) - x),
+			h: Math.max(1, Math.min(r.y + r.h, def.clip.y + def.clip.h) - y)
+		};
 	}
-	const w = x1 - x0;
-	const h = y1 - y0;
+	if (def.kind === 'pool') return def.box;
+	const xs = def.polygon.map((p) => p[0]);
+	const ys = def.polygon.map((p) => p[1]);
+	const x = Math.floor(Math.min(...xs));
+	const y = Math.floor(Math.min(...ys));
+	return { x, y, w: Math.ceil(Math.max(...xs)) - x, h: Math.ceil(Math.max(...ys)) - y };
+}
+
+export function renderLight(def: ResolvedLight, color: RGB, strength: number): LightImage | null {
+	if (strength <= 0.004) return null;
+	const { x: x0, y: y0, w, h } = bounds(def);
 	const canvas = document.createElement('canvas');
 	canvas.width = w;
 	canvas.height = h;
@@ -173,7 +212,12 @@ export function renderLight(def: LightDef, color: RGB, strength: number): LightI
 		for (let x = 0; x < w; x++) {
 			const sx = x0 + x;
 			const sy = y0 + y;
-			const level = def.kind === 'glow' ? glowLevels(def, sx, sy) : shaftLevels(def, sx, sy);
+			const level =
+				def.kind === 'glow'
+					? glowLevels(def, sx, sy)
+					: def.kind === 'pool'
+						? poolLevels(def.box, sx, sy)
+						: shaftLevels(def.polygon, sx, sy);
 			if (level <= 0) continue;
 			const k = level * strength;
 			const i = (y * w + x) * 4;

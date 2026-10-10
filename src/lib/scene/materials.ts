@@ -35,7 +35,13 @@ export const MATERIALS = [
 	'sticker1',
 	'sticker2',
 	'sticker3',
-	'building'
+	'building',
+	'hoodie',
+	'jeans',
+	'cork',
+	'wood',
+	'paper',
+	'radio'
 ] as const;
 
 export type Material = (typeof MATERIALS)[number];
@@ -66,7 +72,8 @@ export function paletteRamps(key: PaletteKey): Ramps {
 	const quantize = 'quantize' in p && p.quantize === 'ENDESGA32';
 	const out = {} as Ramps;
 	for (const m of MATERIALS) {
-		const r = ramp(materialBase(key, m), p.shadowHue, p.lightHue);
+		const fixed = 'ramps' in p ? (p.ramps as Partial<Ramps>)[m] : undefined;
+		const r = fixed ? { ...fixed } : ramp(materialBase(key, m), p.shadowHue, p.lightHue);
 		if (quantize) for (const s of SHADES) r[s] = snapToEndesga(r[s]);
 		out[m] = r;
 	}
