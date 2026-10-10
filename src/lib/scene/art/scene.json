@@ -46,8 +46,9 @@
 		"notes": [
 			{ "x": 7, "y": 7, "w": 86, "h": 12 },
 			{ "x": 13, "y": 21, "w": 70, "h": 12 },
-			{ "x": 8, "y": 35, "w": 50, "h": 12 },
-			{ "x": 26, "y": 49, "w": 56, "h": 12 }
+			{ "x": 7, "y": 35, "w": 42, "h": 12 },
+			{ "x": 52, "y": 35, "w": 48, "h": 12 },
+			{ "x": 36, "y": 49, "w": 30, "h": 12 }
 		]
 	},
 	"clock": { "centre": [20, 20], "hour": 9, "minute": 13, "second": 15 },
@@ -127,6 +128,7 @@
 		{ "sprite": "plant", "layer": "wall", "place": "plant" },
 		{ "sprite": "sign", "layer": "wall", "place": "sign", "tag": "unlit", "dark": "lit" },
 		{ "sprite": "corkboard", "layer": "wall", "place": "cork" },
+		{ "sprite": "note-cv", "layer": "wall", "place": "cork", "offset": [36, 49], "requires": "cv" },
 		{ "sprite": "clock", "layer": "wall", "place": "clock" },
 		{ "procedural": "clockHands", "layer": "wall" },
 		{ "sprite": "swatch", "layer": "wall", "place": "swatch" },
@@ -158,6 +160,8 @@
 		{ "sprite": "sticker-name", "layer": "near", "at": [396, 302] },
 		{ "sprite": "sticker-code", "layer": "near", "at": [417, 317] },
 		{ "sprite": "sticker-cats", "layer": "near", "at": [410, 330] },
+		{ "sprite": "sticker-bolt", "layer": "near", "at": [372, 330] },
+		{ "sprite": "sticker-heart", "layer": "near", "at": [384, 332] },
 		{ "sprite": "sticker-scroll", "layer": "near", "at": [433, 331], "requires": "cv" },
 		{ "sprite": "radio", "layer": "near", "place": "radio", "tag": "on", "requires": "sound" },
 		{ "sprite": "radio", "layer": "near", "place": "radio", "tag": "off", "requires": "!sound" },

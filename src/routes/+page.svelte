@@ -2,6 +2,9 @@
 	import Corkboard from '#lib/components/Corkboard.svelte';
 	import Scene from '#lib/components/Scene.svelte';
 	import Sign from '#lib/components/Sign.svelte';
+	import type { PageProps } from './$types';
+
+	let { data }: PageProps = $props();
 
 	const SITE = 'https://joelleortiz.me/';
 	const TITLE = 'Joelle Ortiz';
@@ -28,9 +31,9 @@
 <main>
 	<div class="objects">
 		<Sign />
-		<Corkboard />
+		<Corkboard cv={data.cv} />
 	</div>
-	<Scene />
+	<Scene cv={data.cv} />
 </main>
 
 <style>

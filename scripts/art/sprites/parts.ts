@@ -1,6 +1,7 @@
 // Drawing routines for the study scene (option B of the B1b sketches): Joelle at medium-shot
 // scale, the cats, desk props and wall objects. Each returns a canvas or draws into one; the
 // sprite definitions that place them are in study.ts.
+import { SWATCH_CHIPS } from '../../../src/lib/scene/materials.ts';
 import { Canvas, limb } from '../lib/canvas.ts';
 import type { Pt } from '../lib/sheet.ts';
 // Joelle's head at medium-shot scale, drawn from shapes so one routine covers front and
@@ -1036,9 +1037,48 @@ export function sign(p: Canvas, x: number, y: number, w: number, h: number, lit:
 	return [lx, y - 4];
 }
 
+// Die-cut stickers with a white edge: l, b and d are the light, base and dark shades of a sticker
+// colour.
+// prettier-ignore
+const BOLT = [
+	'...wwwwww',
+	'..wwllllw',
+	'..wlbbbww',
+	'.wwbbbww.',
+	'wwbbbwwww',
+	'wbbbbbbbw',
+	'wwwwbbdww',
+	'..wbbdww.',
+	'.wwbdww..',
+	'.wbdww...',
+	'.wdww....',
+	'.www.....'
+];
+// prettier-ignore
+const HEART = [
+	'.wwww.wwww.',
+	'wwlbwwwbbww',
+	'wlbbbwbbbbw',
+	'wbbbbbbbbbw',
+	'wbbbbbbbbdw',
+	'wwbbbbbbdww',
+	'.wwbbbbdww.',
+	'..wwbbdww..',
+	'...wwdww...',
+	'....www....'
+];
+
+const dieCut = (colour: string) => ({
+	w: 'catWhite.l',
+	l: `${colour}.l`,
+	b: `${colour}.b`,
+	d: `${colour}.d`
+});
+
 /**
- * The laptop lid as seen from behind (64×40), with the stickers. The radio stands in front of the
- * lower-left corner, so that corner stays bare. Two stickers overlap and one corner peels.
+ * The laptop lid as seen from behind (64×40), with the stickers. On phones the radio stands in
+ * front of the lower-left corner, so only plain stickers (a bolt and a heart) go there. Two
+ * stickers overlap and one corner peels.
  */
 export function stickerSheet(): Canvas {
 	const s = new Canvas(64, 40);
@@ -1088,6 +1128,9 @@ export function stickerSheet(): Canvas {
 		w: 'catWhite.b'
 	});
 	s.grid(44, 31, ['...', '...'], {});
+	// A lightning bolt and a heart.
+	s.grid(3, 27, BOLT, dieCut('sticker2'));
+	s.grid(14, 28, HEART, dieCut('sticker0'));
 	// Rolled-up scroll (the CV), hidden until the CV exists.
 	s.rect(57, 26, 6, 12, 'paper.b').rect(57, 26, 6, 2, 'paper.d').rect(57, 36, 6, 2, 'paper.d');
 	s.vline(59, 28, 35, 'paper.d');
@@ -1236,9 +1279,8 @@ export function clock(p: Canvas, x: number, y: number, d: number): void {
 export function swatchCard(p: Canvas, x: number, y: number, w = 14, h = 30): void {
 	p.rect(x + 1, y + 1, w, h, 'wall.d');
 	p.rect(x, y, w, h, 'catWhite.l');
-	const chips = ['sweater', 'sticker1', 'sticker0', 'lamp'];
 	const ch = Math.floor((h - 4) / 4);
-	chips.forEach((c, i) => {
+	SWATCH_CHIPS.forEach((c, i) => {
 		const cy = y + 2 + i * ch;
 		p.rect(x + 2, cy, w - 4, ch - 1, `${c}.b`).hline(x + 2, x + w - 3, cy, `${c}.l`);
 	});

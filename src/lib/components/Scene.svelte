@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { dev } from '$app/env';
+	import { resolve } from '$app/paths';
 	import { onMount } from 'svelte';
 	import { SvelteSet } from 'svelte/reactivity';
 	import { playSceneSound, preloadMusic, type SceneSound } from '#lib/audio/index.ts';
@@ -12,6 +13,13 @@
 	import { view } from '#lib/theme/view.svelte.ts';
 	import Radio from './Radio.svelte';
 	import Switchers from './Switchers.svelte';
+
+	interface Props {
+		/** Whether the CV has content: the `cv` flag shows its scroll sticker and corkboard note. */
+		cv: boolean;
+	}
+
+	let { cv }: Props = $props();
 
 	const LABEL =
 		"Pixel-art scene: Joelle, in a black hoodie and round glasses, typing on a sticker-covered laptop at a desk by a window, with an iced coffee, a desk lamp and a radio on the desk. Joelle's slender tabby cat Myles sits on the desk alongside, and Margot, a round-faced tabby-and-white cat, sleeps on the windowsill.";
@@ -41,10 +49,10 @@
 			href: 'https://www.linkedin.com/in/joelle-ortiz',
 			sticker: true
 		},
-		{ sprite: 'sticker-scroll', label: 'CV', href: '/cv', sticker: true, requires: 'cv' }
+		{ sprite: 'sticker-scroll', label: 'CV', href: resolve('/cv'), sticker: true, requires: 'cv' }
 	];
 
-	const FLAGS = ['asleep'];
+	const flags = $derived(cv ? ['asleep', 'cv'] : ['asleep']);
 
 	const SCENE_SOUNDS: ReadonlySet<string> = new Set<SceneSound>([
 		'type',
@@ -85,7 +93,7 @@
 	}
 
 	function placeHotspots(created: SceneEngine) {
-		spots = HOTSPOTS.filter((h) => !h.requires || FLAGS.includes(h.requires)).flatMap((h) => {
+		spots = HOTSPOTS.filter((h) => !h.requires || flags.includes(h.requires)).flatMap((h) => {
 			const area = created.hitArea(h.sprite);
 			return area ? [{ ...h, area }] : [];
 		});
@@ -141,7 +149,7 @@
 			palette: theme.palette,
 			time: theme.time,
 			reducedMotion: motion.matches,
-			flags: FLAGS,
+			flags,
 			onEvent: (_sprite, event) => director?.handleEvent(event)
 		}).then((created) => {
 			if (!alive) return created.destroy();
@@ -231,15 +239,18 @@
 	></canvas>
 	{#each shown as spot (spot.sprite)}
 		{#if spot.href}
-			<!-- External profile links, not app routes, so resolve() does not apply. -->
+			{@const external = URL.canParse(spot.href)}
+			<!-- Profiles open in a new tab. The CV (its href from resolve()) opens in this one, loaded
+			     afresh because /cv runs no JavaScript. -->
 			<!-- eslint-disable svelte/no-navigation-without-resolve -->
 			<a
 				class="hotspot in-scene"
 				class:tapped={tapped === spot.sprite}
 				style={box(spot.area)}
 				href={spot.href}
-				target="_blank"
-				rel="noopener"
+				target={external ? '_blank' : undefined}
+				rel={external ? 'noopener' : undefined}
+				data-sveltekit-reload
 				aria-label={spot.label}
 				onpointerenter={() => lift(spot, true)}
 				onpointerleave={() => lift(spot, false)}

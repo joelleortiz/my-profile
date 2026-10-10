@@ -239,6 +239,8 @@ export const STICKERS = {
 	'sticker-name': { x: 27, y: 2, w: 25, h: 17 },
 	'sticker-code': { x: 44, y: 14, w: 19, h: 11 },
 	'sticker-cats': { x: 37, y: 26, w: 19, h: 12 },
+	'sticker-bolt': { x: 3, y: 27, w: 9, h: 12 },
+	'sticker-heart': { x: 14, y: 28, w: 11, h: 10 },
 	'sticker-scroll': { x: 57, y: 26, w: 6, h: 12 }
 } as const;
 
@@ -906,8 +908,8 @@ export const CORK = { w: 108, h: 66 };
 export const NOTES = [
 	{ x: 7, y: 7, w: 86, h: 12 },
 	{ x: 13, y: 21, w: 70, h: 12 },
-	{ x: 8, y: 35, w: 50, h: 12 },
-	{ x: 26, y: 49, w: 56, h: 12 }
+	{ x: 7, y: 35, w: 42, h: 12 },
+	{ x: 52, y: 35, w: 48, h: 12 }
 ];
 
 export const corkSprite: SpriteDef = (() => {
@@ -919,6 +921,15 @@ export const corkSprite: SpriteDef = (() => {
 	NOTES.forEach((n, i) => note(p, ox + n.x, oy + n.y, n.w, n.h, papers[i], i));
 	stringLights(p, ox - 2, ox + CORK.w + 2, oy - 1, 5, 7);
 	return still('corkboard', p, [ox, oy]);
+})();
+
+/** The CV's note, alone at the bottom: its own sprite, drawn only while the CV has content. */
+export const CV_NOTE = { x: 36, y: 49, w: 30, h: 12 };
+
+export const cvNoteSprite: SpriteDef = (() => {
+	const p = new Canvas(CV_NOTE.w + 1, CV_NOTE.h + 3);
+	note(p, 0, 2, CV_NOTE.w, CV_NOTE.h, 'paper', 0);
+	return still('note-cv', p, [0, 2]);
 })();
 
 export const CLOCK = { d: 40 };
@@ -970,6 +981,7 @@ export const studySprites: SpriteDef[] = [
 	plantSprite,
 	signSprite,
 	corkSprite,
+	cvNoteSprite,
 	clockSprite,
 	swatchSprite,
 	margotSprite,

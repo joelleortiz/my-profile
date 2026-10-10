@@ -1,7 +1,7 @@
 import { dev } from '$app/env';
 import { DEFAULT_PALETTE, isPaletteKey, PALETTE_KEYS, type PaletteKey } from '../scene/palettes.ts';
 import { isSceneTime, timeOfDay, TIMES, uiMode, type SceneTime } from '../scene/time.ts';
-import { PALETTE_STORAGE_KEY, TIME_STORAGE_KEY } from './head.ts';
+import { PALETTE_STORAGE_KEY, TIME_STORAGE_KEY } from './keys.ts';
 
 function read(key: string): string | null {
 	try {

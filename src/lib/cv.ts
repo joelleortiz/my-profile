@@ -33,6 +33,7 @@ export interface Cv {
 		linkedin: string;
 		github: string;
 	};
+	/** Lines separated by "\n". */
 	summary: string;
 	skills: { category: string; items: string[] }[];
 	experience: CvJob[];
@@ -52,7 +53,7 @@ export const cv: Cv = {
 		github: 'https://github.com/joelleortiz'
 	},
 	summary:
-		"I'm a full-stack engineer who deeply cares about UI/UX and building products people love using. I've been at Amber since it was small, starting new teams and launching products, including our UK and European expansion, and I'm now leading our vehicle-to-grid work. I'm the frontend go-to across engineering, good at connecting teams, and at my best untangling messy problems, whether it's a team that's stuck or a technical knot.",
+		"I'm a software engineer who deeply cares about UI/UX and building products people love using.\nAt Amber I've started new teams and launched products, and I'm the frontend go-to person. I'm at my best untangling messy problems, whether it's a team that's stuck or a technical knot.",
 	skills: [
 		{
 			category: 'Frontend and mobile',
@@ -129,7 +130,7 @@ export const cv: Cv = {
 					bullets: [
 						'Seconded into teams that needed help getting started or delivering, including onboarding and upskilling new members of Growth so the team became productive quickly.',
 						"Tech Enablement: Started Amber's design system. The foundations are now used by all teams, improving delivery speed and consistency across multiple apps, especially as International expanded.",
-						'Frontend authority across engineering, connecting teams and driving cross-team collaboration.'
+						'Frontend authority across the company, advising on technical feasibility and driving cross-team collaboration.'
 					]
 				},
 				{
